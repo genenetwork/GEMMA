@@ -1274,15 +1274,18 @@ bool BimbamKin (const string &file_geno, const string loco, vector<int> &indicat
 	size_t n_miss;
 	double d, geno_mean, geno_var;
 
+	// map<string, string> &mapRS2chr;
+	// assert(map_RS2chr);
 	size_t ni_total=matrix_kin->size1;
 	gsl_vector *geno=gsl_vector_alloc (ni_total);
 	gsl_vector *geno_miss=gsl_vector_alloc (ni_total);
 
-	// Create a large matrix.
+	// Create a large matrix. FIXME: hard coded size
 	size_t msize=10000;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (ni_total, msize);
 	gsl_matrix_set_zero(Xlarge);
 
+	// For every SNP read the genotype per individual
 	size_t ns_test=0;
 	for (size_t t=0; t<indicator_snp.size(); ++t) {
 		!safeGetline(infile, line).eof();
@@ -1295,6 +1298,7 @@ bool BimbamKin (const string &file_geno, const string loco, vector<int> &indicat
 		ch_ptr=strtok (NULL, " , \t");
 		ch_ptr=strtok (NULL, " , \t");
 
+		// calc SNP stats
 		geno_mean=0.0; n_miss=0; geno_var=0.0;
 		gsl_vector_set_all(geno_miss, 0);
 		for (size_t i=0; i<ni_total; ++i) {
@@ -1332,6 +1336,7 @@ bool BimbamKin (const string &file_geno, const string loco, vector<int> &indicat
 
 		ns_test++;
 
+		// compute kinship matrix and return in matrix_kin a SNP at a time
 		if (ns_test%msize==0) {
 		  eigenlib_dgemm ("N", "T", 1.0, Xlarge, Xlarge, 1.0,
 				  matrix_kin);
@@ -1344,6 +1349,7 @@ bool BimbamKin (const string &file_geno, const string loco, vector<int> &indicat
 	}
 	cout<<endl;
 
+	// finally scale the kinship matrix
 	gsl_matrix_scale (matrix_kin, 1.0/(double)ns_test);
 
 	for (size_t i=0; i<ni_total; ++i) {

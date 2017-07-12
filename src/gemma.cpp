@@ -1412,7 +1412,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 	}
 
 
-	//Generate Kinship matrix
+	//Generate Kinship matrix (optionally using LOCO)
 	if (cPar.a_mode==21 || cPar.a_mode==22) {
 		cout<<"Calculating Relatedness Matrix ... "<<endl;
 
