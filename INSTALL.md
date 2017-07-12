@@ -23,6 +23,8 @@ dependencies:
 
 ### Bioconda
 
+(Note Bioconda install is a work in [progress](https://github.com/xiangzhou/GEMMA/issues/52)
+
 Recent versions of GEMMA can be installed with
 [BioConda](http://ddocent.com/bioconda/) without root permissions using the following
 command
@@ -31,7 +33,7 @@ command
 
 ### GNU Guix
 
-The GNU Guix package manager can install recent versions of GEMMA
+The GNU Guix package manager can install recent versions of [GEMMA](https://www.gnu.org/software/guix/packages/g.html)
 using the following command
 
     guix package -i gemma
@@ -45,4 +47,10 @@ Install listed dependencies and run
 if you get an Eigen error you may need to override the include
 path. E.g. on GNU Guix with shared libs this may work
 
-    make EIGEN_INCLUDE_PATH=~/.guix-profile/include/eigen3 FORCE_DYNAMIC=1
+    make EIGEN_INCLUDE_PATH=~/.guix-profile/include/eigen3 FORCE_DYNAMIC=1 WITH_OPENBLAS=1
+
+to run GEMMA tests
+
+    make check
+
+Other options, such as compiling with warnings,  are listed in the Makefile

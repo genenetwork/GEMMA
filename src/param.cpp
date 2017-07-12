@@ -61,7 +61,7 @@ error(false),
 ni_subsample(0), n_cvt(1), n_vc(1), n_cat(0),
 time_total(0.0), time_G(0.0), time_eigen(0.0), time_UtX(0.0),
 time_UtZ(0.0), time_opt(0.0), time_Omega(0.0)
-{}
+{ }
 
 // Read files: obtain ns_total, ng_total, ns_test, ni_test.
 void PARAM::ReadFiles (void) {
@@ -1108,6 +1108,8 @@ void PARAM::CheckData (void) {
 	  if (!file_gene.empty()) {
 	    cout<<"## number of total genes = "<<ng_total<<endl;
 	  } else if (file_epm.empty() && a_mode!=43 && a_mode!=5) {
+	    if (!loco.empty())
+	      cout<<"## leave one chromosome out (LOCO) = "<<loco<<endl;
 	    cout<<"## number of total SNPs = "<<ns_total<<endl;
 	    cout<<"## number of analyzed SNPs = "<<ns_test<<endl;
 	  } else {}
@@ -1286,7 +1288,7 @@ void PARAM::CalcKin (gsl_matrix *matrix_kin)  {
  	}
 	else {
 		file_str=file_geno;
-		if (BimbamKin (file_str, indicator_snp, a_mode-20, d_pace,
+		if (BimbamKin (file_str, loco, indicator_snp, a_mode-20, d_pace,
 			       matrix_kin)==false) {
 		  error=true;
 		}
@@ -1667,36 +1669,36 @@ void PARAM::CalcS (const map<string, double> &mapRS2wA,
   } else if (!file_geno.empty()) {
     file_str=file_geno;
     if (mapRS2wA.size()==0) {
-      if (BimbamKin (file_str, d_pace, indicator_idv, indicator_snp,
+      if (BimbamKin (file_str, loco, d_pace, indicator_idv, indicator_snp,
 		     mapRS2wK, mapRS2cat, snpInfo, W, K, ns)==false) {
 	error=true;
       }
     } else {
-      if (BimbamKin (file_str, d_pace, indicator_idv, indicator_snp,
+      if (BimbamKin (file_str, loco, d_pace, indicator_idv, indicator_snp,
 		     mapRS2wA, mapRS2cat, snpInfo, W, A, ns)==false) {
 	error=true;
       }
     }
   } else if (!file_mbfile.empty() ){
     if (mapRS2wA.size()==0) {
-      if (MFILEKin (1, file_mbfile, d_pace, indicator_idv, mindicator_snp,
+      if (MFILEKin (1, file_mbfile, loco, d_pace, indicator_idv, mindicator_snp,
 		    mapRS2wK, mapRS2cat, msnpInfo, W, K, ns)==false) {
 	error=true;
       }
     } else {
-      if (MFILEKin (1, file_mbfile, d_pace, indicator_idv, mindicator_snp,
+      if (MFILEKin (1, file_mbfile, loco, d_pace, indicator_idv, mindicator_snp,
 		    mapRS2wA, mapRS2cat, msnpInfo, W, A, ns)==false) {
 	error=true;
       }
     }
   } else if (!file_mgeno.empty()) {
     if (mapRS2wA.size()==0) {
-      if (MFILEKin (0, file_mgeno, d_pace, indicator_idv, mindicator_snp,
+      if (MFILEKin (0, file_mgeno, loco, d_pace, indicator_idv, mindicator_snp,
 		    mapRS2wK, mapRS2cat, msnpInfo, W, K, ns)==false) {
 	error=true;
       }
     } else {
-      if (MFILEKin (0, file_mgeno, d_pace, indicator_idv, mindicator_snp,
+      if (MFILEKin (0, file_mgeno, loco, d_pace, indicator_idv, mindicator_snp,
 		    mapRS2wA, mapRS2cat, msnpInfo, W, A, ns)==false) {
 	error=true;
       }

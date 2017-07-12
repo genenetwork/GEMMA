@@ -88,7 +88,7 @@ void ReadFile_mk (const string &file_mk, vector<int> &indicator_idv,
 void ReadFile_eigenU (const string &file_u, bool &error, gsl_matrix *U);
 void ReadFile_eigenD (const string &file_d, bool &error, gsl_vector *eval);
 
-bool BimbamKin (const string &file_geno, vector<int> &indicator_snp,
+bool BimbamKin (const string &file_geno, const string loco, vector<int> &indicator_snp,
 		const int k_mode, const int display_pace,
 		gsl_matrix *matrix_kin);
 bool PlinkKin (const string &file_bed, vector<int> &indicator_snp,
@@ -132,7 +132,7 @@ bool ReadFile_catc (const string &file_cat,
 bool ReadFile_mcatc (const string &file_mcat, map<string,
 		     vector<double> > &mapRS2catc, size_t &n_cat);
 
-bool BimbamKin (const string &file_geno, const int display_pace,
+bool BimbamKin (const string &file_geno, const string loco, const int display_pace,
 		const vector<int> &indicator_idv,
 		const vector<int> &indicator_snp,
 		const map<string, double> &mapRS2weight,
@@ -147,7 +147,7 @@ bool PlinkKin (const string &file_bed, const int display_pace,
 	       const vector<SNPINFO> &snpInfo,
 	       const gsl_matrix *W, gsl_matrix *matrix_kin,
 	       gsl_vector *vector_ns);
-bool MFILEKin (const size_t mfile_mode, const string &file_mfile,
+bool MFILEKin (const size_t mfile_mode, const string &file_mfile, const string loco,
 	       const int display_pace, const vector<int> &indicator_idv,
 	       const vector<vector<int> > &mindicator_snp,
 	       const map<string, double> &mapRS2weight,
@@ -204,10 +204,3 @@ bool ReadFile_sample(const string &file_sample,
 		     size_t &n_cvt);
 
 #endif
-
-
-
-
-
-
-

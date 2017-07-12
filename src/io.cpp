@@ -1259,7 +1259,7 @@ void ReadFile_eigenD (const string &file_kd, bool &error, gsl_vector *eval) {
 }
 
 // Read bimbam mean genotype file and calculate kinship matrix.
-bool BimbamKin (const string &file_geno, vector<int> &indicator_snp,
+bool BimbamKin (const string &file_geno, const string loco, vector<int> &indicator_snp,
 		const int k_mode, const int display_pace,
 		gsl_matrix *matrix_kin) {
 	igzstream infile (file_geno.c_str(), igzstream::in);
@@ -3123,7 +3123,7 @@ bool ReadFile_mcat (const string &file_mcat, map<string, size_t> &mapRS2cat,
 // Read bimbam mean genotype file and calculate kinship matrix; this
 // time, the kinship matrix is not centered, and can contain multiple
 // K matrix.
-bool BimbamKin (const string &file_geno, const int display_pace,
+bool BimbamKin (const string &file_geno, const string loco, const int display_pace,
 		const vector<int> &indicator_idv,
 		const vector<int> &indicator_snp,
 		const map<string, double> &mapRS2weight,
@@ -3526,7 +3526,7 @@ bool PlinkKin (const string &file_bed, const int display_pace,
 }
 
 bool MFILEKin (const size_t mfile_mode, const string &file_mfile,
-	       const int display_pace, const vector<int> &indicator_idv,
+	       const string loco, const int display_pace, const vector<int> &indicator_idv,
 	       const vector<vector<int> > &mindicator_snp,
 	       const map<string, double> &mapRS2weight,
 	       const map<string, size_t> &mapRS2cat,
@@ -3558,7 +3558,7 @@ bool MFILEKin (const size_t mfile_mode, const string &file_mfile,
       file_name+=".bed";
       PlinkKin (file_name, display_pace, indicator_idv, mindicator_snp[l], mapRS2weight, mapRS2cat, msnpInfo[l], W, kin_tmp, ns_tmp);
     } else {
-      BimbamKin (file_name, display_pace, indicator_idv, mindicator_snp[l], mapRS2weight, mapRS2cat, msnpInfo[l], W, kin_tmp, ns_tmp);
+      BimbamKin (file_name, loco, display_pace, indicator_idv, mindicator_snp[l], mapRS2weight, mapRS2cat, msnpInfo[l], W, kin_tmp, ns_tmp);
     }
 
     // Add ns.
