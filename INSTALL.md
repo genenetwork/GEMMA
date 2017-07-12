@@ -52,3 +52,5 @@ path. E.g. on GNU Guix with shared libs this may work
 to run GEMMA tests
 
     make check
+
+Other options, such as compiling with warnings,  are listed in the Makefile

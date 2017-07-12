@@ -311,6 +311,7 @@ void GEMMA::PrintHelp(size_t option) {
 
   if (option==4) {
     cout<<" RELATEDNESS MATRIX CALCULATION OPTIONS" << endl;
+    cout<<" -loco     [chr]          "<<" leave one chromosome out (LOCO) by name" << endl;
     cout<<" -gk       [num]          "<<" specify which type of kinship/relatedness matrix to generate (default 1)" << endl;
     cout<<"          options: 1: centered XX^T/p"<<endl;
     cout<<"                   2: standardized XX^T/p"<<endl;
@@ -828,6 +829,13 @@ void GEMMA::Assign(int argc, char ** argv, PARAM &cPar) {
 		}
 		else if (strcmp(argv[i], "-notsnp")==0) {
 			cPar.maf_level=-1;
+		}
+		else if (strcmp(argv[i], "-loco")==0) {
+		        assert(argv[i+1]);
+			++i;
+			str.clear();
+			str.assign(argv[i]);
+			cPar.loco=str;
 		}
 		else if (strcmp(argv[i], "-gk")==0) {
 			if (cPar.a_mode!=0) {cPar.error=true; cout<<"error! only one of -gk -gs -eigen -vc -lm -lmm -bslmm -predict -calccor options is allowed."<<endl; break;}
@@ -3061,5 +3069,3 @@ void GEMMA::WriteLog (int argc, char ** argv, PARAM &cPar)
 	outfile.clear();
 	return;
 }
-
-

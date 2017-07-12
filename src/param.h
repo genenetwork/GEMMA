@@ -152,6 +152,7 @@ public:
 	double r2_level;
 
 	// LMM-related parameters.
+	string loco;
 	double l_min;
 	double l_max;
 	size_t n_region;
@@ -355,4 +356,3 @@ public:
 size_t GetabIndex (const size_t a, const size_t b, const size_t n_cvt);
 
 #endif
-
