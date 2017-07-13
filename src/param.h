@@ -24,6 +24,7 @@
 #include <set>
 #include "gsl/gsl_vector.h"
 #include "gsl/gsl_matrix.h"
+#include "debug.h"
 
 using namespace std;
 

@@ -1419,8 +1419,10 @@ void GEMMA::BatchRun (PARAM &cPar) {
 
 		gsl_matrix *G=gsl_matrix_alloc (cPar.ni_total, cPar.ni_total);
 
+		enforce(0);
 		time_start=clock();
 		cPar.CalcKin (G);
+
 		cPar.time_G=(clock()-time_start)/(double(CLOCKS_PER_SEC)*60.0);
 		if (cPar.error==true) {cout<<"error! fail to calculate relatedness matrix. "<<endl; return;}
 

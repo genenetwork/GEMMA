@@ -1274,7 +1274,7 @@ void PARAM::CalcKin (gsl_matrix *matrix_kin)  {
 
 	if (!file_bfile.empty() ) {
 		file_str=file_bfile+".bed";
-		assert(loco.empty()); // FIXME: LOCO nyi
+		enforce(loco.empty()); // FIXME: LOCO nyi
 		if (PlinkKin (file_str, indicator_snp, a_mode-20, d_pace,
 			      matrix_kin)==false) {
 		  error=true;
