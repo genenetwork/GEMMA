@@ -2,20 +2,6 @@
 
 gemma=../bin/gemma
 
-testCenteredRelatednessMatrixK() {
-    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
-           -gk -o mouse_hs1940
-    assertEquals 0 $?
-    grep "total computation time" < output/mouse_hs1940.log.txt
-    assertEquals 0 $?
-    assertEquals "1940" `wc -l < output/mouse_hs1940.cXX.txt`
-    assertEquals "3763600" `wc -w < output/mouse_hs1940.cXX.txt`
-    # assertEquals "15f680c" `md5sum < output/mouse_hs1940.cXX.txt | head -c 7`
-    assertEquals "0.335" `head -c 5 output/mouse_hs1940.cXX.txt`
-    # FIXME: The following test fails in the Guix build system (https://github.com/xiangzhou/GEMMA/issues/55)
-    assertEquals "29.691" `awk '{s+=substr($1,0,6)}END{print s}' output/mouse_hs1940.cXX.txt`
-}
-
 testCenteredRelatednessMatrixKLOCO1() {
     outn=mouse_hs1940_LOCO1
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
@@ -30,6 +16,21 @@ testCenteredRelatednessMatrixKLOCO1() {
     # FIXME: The following test fails in the Guix build system (https://github.com/xiangzhou/GEMMA/issues/55)
     assertEquals "29.691" `awk '{s+=substr($1,0,6)}END{print s}' output/mouse_hs1940.cXX.txt`
 }
+
+testCenteredRelatednessMatrixK() {
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
+           -gk -o mouse_hs1940
+    assertEquals 0 $?
+    grep "total computation time" < output/mouse_hs1940.log.txt
+    assertEquals 0 $?
+    assertEquals "1940" `wc -l < output/mouse_hs1940.cXX.txt`
+    assertEquals "3763600" `wc -w < output/mouse_hs1940.cXX.txt`
+    # assertEquals "15f680c" `md5sum < output/mouse_hs1940.cXX.txt | head -c 7`
+    assertEquals "0.335" `head -c 5 output/mouse_hs1940.cXX.txt`
+    # FIXME: The following test fails in the Guix build system (https://github.com/xiangzhou/GEMMA/issues/55)
+    assertEquals "29.691" `awk '{s+=substr($1,0,6)}END{print s}' output/mouse_hs1940.cXX.txt`
+}
+
 
 testUnivariateLinearMixedModel() {
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt -n 1 \
