@@ -874,11 +874,8 @@ void PARAM::CheckParam (void) {
 	  error=true;
 	}
 
-	str=file_anno;
-	if (!str.empty() && stat(str.c_str(),&fileInfo)==-1 ) {
-	  cout<<"error! fail to open annotation file: "<<str<<endl;
-	  error=true;
-	}
+	if (!file_anno.empty()) enforce_msg(stat(str.c_str(),&fileInfo)!=-1,(file_anno+" open annotation file").c_str());
+	if (!loco.empty()) enforce_msg(!file_anno.empty(),"LOCO requires annotation file (-a switch)");
 
 	str=file_kin;
 	if (!str.empty() && stat(str.c_str(),&fileInfo)==-1 ) {
@@ -1290,7 +1287,6 @@ void PARAM::CalcKin (gsl_matrix *matrix_kin)  {
  	}
 	else {
 		file_str=file_geno;
-		enforce_msg(loco.empty(),"FIXME: LOCO nyi");
 		if (BimbamKin (file_str, loco, indicator_snp, a_mode-20, d_pace,
 			       matrix_kin)==false) {
 		  error=true;

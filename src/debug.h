@@ -1,6 +1,5 @@
-
-#ifndef __SUPPORT_H__
-#define __SUPPORT_H__
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
 
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
