@@ -1419,7 +1419,6 @@ void GEMMA::BatchRun (PARAM &cPar) {
 
 		gsl_matrix *G=gsl_matrix_alloc (cPar.ni_total, cPar.ni_total);
 
-		enforce(0);
 		time_start=clock();
 		cPar.CalcKin (G);
 

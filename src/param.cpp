@@ -1274,7 +1274,7 @@ void PARAM::CalcKin (gsl_matrix *matrix_kin)  {
 
 	if (!file_bfile.empty() ) {
 		file_str=file_bfile+".bed";
-		enforce(loco.empty()); // FIXME: LOCO nyi
+		enforce_msg(loco.empty(),"FIXME: LOCO nyi");
 		if (PlinkKin (file_str, indicator_snp, a_mode-20, d_pace,
 			      matrix_kin)==false) {
 		  error=true;
@@ -1282,7 +1282,7 @@ void PARAM::CalcKin (gsl_matrix *matrix_kin)  {
 	}
 	else if (!file_oxford.empty() ) {
 		file_str=file_oxford+".bgen";
-		assert(loco.empty()); // FIXME: LOCO nyi
+		enforce_msg(loco.empty(),"FIXME: LOCO nyi");
 		if (bgenKin (file_str, indicator_snp, a_mode-20, d_pace,
 			     matrix_kin)==false) {
 		  error=true;
@@ -1290,6 +1290,7 @@ void PARAM::CalcKin (gsl_matrix *matrix_kin)  {
  	}
 	else {
 		file_str=file_geno;
+		enforce_msg(loco.empty(),"FIXME: LOCO nyi");
 		if (BimbamKin (file_str, loco, indicator_snp, a_mode-20, d_pace,
 			       matrix_kin)==false) {
 		  error=true;
