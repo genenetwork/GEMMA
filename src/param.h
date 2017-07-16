@@ -308,6 +308,7 @@ public:
 	vector<SNPINFO> snpInfo;	 	 // Record SNP information.
 	vector< vector<SNPINFO> > msnpInfo;	 // Record SNP information.
 	set<string> setSnps;			 // Set of snps for analysis.
+	set<string> setKsnps;			 // Set of snps for K (used in LOCO)
 
 	// Constructor.
 	PARAM();
