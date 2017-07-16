@@ -19,6 +19,8 @@ dependencies:
 * [Eigen library](http://eigen.tuxfamily.org/dox/)
 * zlib
 
+See below for installation on Guix.
+
 ## Install GEMMA
 
 ### Bioconda
@@ -37,6 +39,10 @@ The GNU Guix package manager can install recent versions of [GEMMA](https://www.
 using the following command
 
     guix package -i gemma
+
+To install the build tools with GNU Guix
+
+    guix package -i make gcc linux-libre-headers gsl eigen openblas lapack glibc ld-wrapper
 
 ### Install from source
 
