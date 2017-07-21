@@ -28,7 +28,7 @@ testCenteredRelatednessMatrixK() {
     # assertEquals "15f680c" `md5sum < output/mouse_hs1940.cXX.txt | head -c 7`
     assertEquals "0.335" `head -c 5 output/mouse_hs1940.cXX.txt`
     # FIXME: The following test fails in the Guix build system (https://github.com/xiangzhou/GEMMA/issues/55)
-    assertEquals "29.691" `awk '{s+=substr($1,0,6)}END{print s}' output/mouse_hs1940.cXX.txt`
+    assertEquals "24.9799" `awk '{s+=substr($1,0,6)}END{print s}' output/mouse_hs1940.cXX.txt`
 }
 
 
@@ -60,9 +60,9 @@ shunit2=`which shunit2`
 if [ -e "../contrib/shunit2/source/2.0/src/shell/shunit2" ]; then
     echo try to run the locally installed shunit2
     . ../contrib/shunit2/source/2.0/src/shell/shunit2
-elif [ -e "../shunit2-2.0.3/src/shell/shunit2" ]; then
+elif [ -e "shunit2-2.0.3/src/shell/shunit2" ]; then
     echo try to run the older locally installed shunit2
-    . ../shunit2-2.0.3/src/shell/shunit2
+    . shunit2-2.0.3/src/shell/shunit2
 elif [ -x "$shunit2" ]; then
     echo run system shunit2
     . $shunit2
