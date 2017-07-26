@@ -8,13 +8,12 @@ testCenteredRelatednessMatrixKLOCO1() {
            -a ../example/mouse_hs1940.anno.txt -loco 1 -gk -o $outn
     assertEquals 0 $?
     grep "total computation time" < output/$outn.log.txt
+    outfn=output/$outn.cXX.txt
     assertEquals 0 $?
-    assertEquals "1900" `wc -l < output/mouse_hs1940.cXX.txt`
-    assertEquals "3763600" `wc -w < output/mouse_hs1940.cXX.txt`
-    # assertEquals "15f680c" `md5sum < output/mouse_hs1940.cXX.txt | head -c 7`
-    assertEquals "0.335" `head -c 5 output/mouse_hs1940.cXX.txt`
-    # FIXME: The following test fails in the Guix build system (https://github.com/xiangzhou/GEMMA/issues/55)
-    assertEquals "29.691" `awk '{s+=substr($1,0,6)}END{print s}' output/mouse_hs1940.cXX.txt`
+    assertEquals "1940" `wc -l < $outfn`
+    assertEquals "3763600" `wc -w < $outfn`
+    assertEquals "0.335" `head -c 5 $outfn`
+    assertEquals "xx" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
 }
 
 testCenteredRelatednessMatrixK() {

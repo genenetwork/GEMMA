@@ -874,7 +874,7 @@ void PARAM::CheckParam (void) {
 	  error=true;
 	}
 
-	if (!file_anno.empty()) enforce_msg(stat(str.c_str(),&fileInfo)!=-1,(file_anno+" open annotation file").c_str());
+	if (!file_anno.empty()) enforce_msg(stat(file_anno.c_str(),&fileInfo)==0,(file_anno+" open annotation file").c_str());
 	if (!loco.empty()) enforce_msg(!file_anno.empty(),"LOCO requires annotation file (-a switch)");
 
 	str=file_kin;
