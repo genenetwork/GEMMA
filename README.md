@@ -10,7 +10,7 @@ models (LMMs) and related models to genome-wide association studies
 Check out [NEWS.md](NEWS.md) to see what's new in each GEMMA release.
 
 Please post comments, feature requests or suspected bugs to
-[Github issues](https://github.com/xiangzhou/GEMMA/issues). We also
+[Github issues](https://github.com/genetics-statistics/GEMMA/issues). We also
 encourage contributions, for example, by forking the repository,
 making your changes to the code, and issuing a pull request.
 
@@ -19,7 +19,7 @@ platforms. *Windows is not currently supported.* If you are interested
 in helping to make GEMMA available on Windows platforms (e.g., by
 providing installation instructions for Windows, or by contributing
 Windows binaries) please post a note in the
-[Github issues](https://github.com/xiangzhou/GEMMA/issues).
+[Github issues](https://github.com/genetics-statistics/GEMMA/issues).
 
 *(The above image depicts physiological and behavioral trait
 loci identified in CFW mice using GEMMA, from [Parker et al, Nature
@@ -98,6 +98,14 @@ distributed in the hope that it will be useful, but **without any
 warranty**; without even the implied warranty of **merchantability or
 fitness for a particular purpose**. See file [LICENSE](LICENSE) for
 the full text of the license.
+
+The source code for the
+[shUnit2](https://github.com/genenetwork/shunit2) unit testing
+framework, included in this repository in the
+[here](test/shunit2-2.0.3), is distributed under the
+[GNU Lesser General Public License](test/shunit2-2.0.3/doc/LGPL-2.1),
+either version 2.1 of the License, or (at your option) any later
+revision.
 
 ## What's included
 
@@ -191,4 +199,4 @@ University of Michigan<br>
 Peter Carbonetto, Tim Flutre, Matthew Stephens, Pjotr Prins and others
 have also contributed to the development of this software.
 
-[latest_release]: https://github.com/xiangzhou/GEMMA/releases/tag/v0.96 "Most recent stable release"
+[latest_release]: https://github.com/genetics-statistics/GEMMA/releases/tag/v0.96 "Most recent stable release"
