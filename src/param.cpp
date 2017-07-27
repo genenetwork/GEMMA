@@ -40,12 +40,16 @@ using namespace std;
 
 // ---- Helper functions which do not use the PARAM scope
 
-void LOCO_set_Snps(set<string> &ksnps, const map<string,string> mapchr, const string loco){
+void LOCO_set_Snps(set<string> &ksnps, set<string> &snps, const map<string,string> mapchr, const string loco){
   assert(ksnps.size()==0); // make sure it is not initialized twice
+  assert(snps.size()==0);  // make sure it is not initialized twice
   for (auto& kv : mapchr) {
-    // cout << kv.first << " has value " << kv.second << endl;
-    if (kv.second != loco) {
-      ksnps.insert(kv.first);
+    auto snp = kv.first;
+    auto chr = kv.second;
+    if (chr != loco) {
+      ksnps.insert(snp);
+    } else {
+      snps.insert(snp);
     }
   }
 }
@@ -484,7 +488,7 @@ void PARAM::ReadFiles (void) {
 
 	// Compute setKSnps when -loco is passed in
 	if (!loco.empty()) {
-	        LOCO_set_Snps(setKSnps,mapRS2chr,loco);
+	        LOCO_set_Snps(setKSnps,setSnps,mapRS2chr,loco);
 	}
 	return;
 }
@@ -1128,9 +1132,11 @@ void PARAM::CheckData (void) {
 	  } else if (file_epm.empty() && a_mode!=43 && a_mode!=5) {
 	    if (!loco.empty())
 	      cout<<"## leave one chromosome out (LOCO) = "<<loco<<endl;
+	    cout<<"## number of total SNPs    = "<<ns_total<<endl;
 	    if (setKSnps.size())
-	      cout<<"## number of SNPS for K = "<<setKSnps.size()<<endl;
-	    cout<<"## number of total SNPs = "<<ns_total<<endl;
+	      cout<<"## number of SNPS for K    = "<<setKSnps.size()<<endl;
+	    if (setSnps.size())
+	      cout<<"## number of SNPS for GWAS = "<<setSnps.size()<<endl;
 	    cout<<"## number of analyzed SNPs = "<<ns_test<<endl;
 	  } else {}
 	}

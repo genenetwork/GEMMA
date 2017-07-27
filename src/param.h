@@ -26,6 +26,8 @@
 #include "gsl/gsl_matrix.h"
 #include "debug.h"
 
+#define MAX_MARKERS 40000 // original value may be too small!
+
 using namespace std;
 
 class SNPINFO {

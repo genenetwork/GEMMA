@@ -88,14 +88,14 @@ void ReadFile_mk (const string &file_mk, vector<int> &indicator_idv,
 void ReadFile_eigenU (const string &file_u, bool &error, gsl_matrix *U);
 void ReadFile_eigenD (const string &file_d, bool &error, gsl_vector *eval);
 
-bool BimbamKin (const string &file_geno, const set<string> ksnps, vector<int> &indicator_snp,
+bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &indicator_snp,
 		const int k_mode, const int display_pace,
 		gsl_matrix *matrix_kin);
 bool PlinkKin (const string &file_bed, vector<int> &indicator_snp,
 	       const int k_mode, const int display_pace,
 	       gsl_matrix *matrix_kin);
 
-bool ReadFile_geno (const string &file_geno, vector<int> &indicator_idv,
+bool ReadFile_geno (const string file_geno, vector<int> &indicator_idv,
 		    vector<int> &indicator_snp, gsl_matrix *UtX,
 		    gsl_matrix *K, const bool calc_K);
 bool ReadFile_bed (const string &file_bed, vector<int> &indicator_idv,

@@ -1259,7 +1259,7 @@ void ReadFile_eigenD (const string &file_kd, bool &error, gsl_vector *eval) {
 }
 
 // Read bimbam mean genotype file and calculate kinship matrix.
-bool BimbamKin (const string &file_geno, const set<string> ksnps, vector<int> &indicator_snp,
+bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &indicator_snp,
 		const int k_mode, const int display_pace,
 		gsl_matrix *matrix_kin) {
 	igzstream infile (file_geno.c_str(), igzstream::in);
@@ -1274,14 +1274,12 @@ bool BimbamKin (const string &file_geno, const set<string> ksnps, vector<int> &i
 	size_t n_miss;
 	double d, geno_mean, geno_var;
 
-	// map<string, string> &mapRS2chr;
-	// assert(map_RS2chr);
 	size_t ni_total=matrix_kin->size1;
 	gsl_vector *geno=gsl_vector_alloc (ni_total);
 	gsl_vector *geno_miss=gsl_vector_alloc (ni_total);
 
-	// Create a large matrix. FIXME: hard coded size
-	size_t msize=10000;
+	// Xlarge contains inds x markers
+	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (ni_total, msize);
 	gsl_matrix_set_zero(Xlarge);
 
@@ -1292,9 +1290,12 @@ bool BimbamKin (const string &file_geno, const set<string> ksnps, vector<int> &i
 		if (t%display_pace==0 || t==(indicator_snp.size()-1)) {
 		  ProgressBar ("Reading SNPs  ", t, indicator_snp.size()-1);
 		}
-		if (indicator_snp[t]==0) {continue;}
+		if (indicator_snp[t]==0) continue;
 
 		ch_ptr=strtok ((char *)line.c_str(), " , \t");
+		// check whether SNP is included in ksnps:
+		auto snp = string(ch_ptr);
+		if (ksnps.count(snp) == 0) continue;
 		ch_ptr=strtok (NULL, " , \t");
 		ch_ptr=strtok (NULL, " , \t");
 
@@ -1330,6 +1331,8 @@ bool BimbamKin (const string &file_geno, const set<string> ksnps, vector<int> &i
 		if (k_mode==2 && geno_var!=0) {
 		  gsl_vector_scale (geno, 1.0/sqrt(geno_var));
 		}
+		// set the SNP column ns_test
+		assert(ns_test < MAX_MARKERS);
 		gsl_vector_view Xlarge_col=
 		  gsl_matrix_column (Xlarge, ns_test%msize);
 		gsl_vector_memcpy (&Xlarge_col.vector, geno);
@@ -1391,7 +1394,7 @@ bool PlinkKin (const string &file_bed, vector<int> &indicator_snp,
 	int n_bit;
 
 	// Create a large matrix.
-	size_t msize=10000;
+	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (ni_total, msize);
 	gsl_matrix_set_zero(Xlarge);
 
@@ -1467,6 +1470,7 @@ bool PlinkKin (const string &file_bed, vector<int> &indicator_snp,
 		if (k_mode==2 && geno_var!=0) {
 		  gsl_vector_scale (geno, 1.0/sqrt(geno_var));
 		}
+		assert(ns_test < MAX_MARKERS);
 		gsl_vector_view Xlarge_col=
 		  gsl_matrix_column (Xlarge, ns_test%msize);
 		gsl_vector_memcpy (&Xlarge_col.vector, geno);
@@ -1505,7 +1509,7 @@ bool PlinkKin (const string &file_bed, vector<int> &indicator_snp,
 
 // Read bimbam mean genotype file, the second time, recode "mean"
 // genotype and calculate K.
-bool ReadFile_geno (const string &file_geno, vector<int> &indicator_idv,
+bool ReadFile_geno (const string file_geno, vector<int> &indicator_idv,
 		    vector<int> &indicator_snp, gsl_matrix *UtX,
 		    gsl_matrix *K, const bool calc_K) {
 	igzstream infile (file_geno.c_str(), igzstream::in);
@@ -3172,7 +3176,7 @@ bool BimbamKin (const string &file_geno, const set<string> ksnps, const int disp
 	}
 
 	// Create a large matrix.
-	size_t msize=10000;
+	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (ni_test, msize*n_vc);
 	gsl_matrix_set_zero(Xlarge);
 
@@ -3366,7 +3370,7 @@ bool PlinkKin (const string &file_bed, const int display_pace,
 	}
 
 	// Create a large matrix.
-	size_t msize=10000;
+	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (ni_test, msize*n_vc);
 	gsl_matrix_set_zero(Xlarge);
 
