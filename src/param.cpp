@@ -38,6 +38,20 @@
 
 using namespace std;
 
+// ---- Helper functions which do not use the PARAM scope
+
+void LOCO_set_Snps(set<string> &ksnps, const map<string,string> mapchr, const string loco){
+  assert(ksnps.size()==0); // make sure it is not initialized twice
+  for (auto& kv : mapchr) {
+    // cout << kv.first << " has value " << kv.second << endl;
+    if (kv.second != loco) {
+      ksnps.insert(kv.first);
+    }
+  }
+}
+
+// ---- PARAM class implementation
+
 PARAM::PARAM(void):
 mode_silence (false), a_mode (0), k_mode(1), d_pace (100000),
 file_out("result"), path_out("./output/"),
@@ -466,6 +480,11 @@ void PARAM::ReadFiles (void) {
 		// Post-process covariates and phenotypes, obtain
 		// ni_test, save all useful covariates.
 		ProcessCvtPhen();
+	}
+
+	// Compute setKSnps when -loco is passed in
+	if (!loco.empty()) {
+	        LOCO_set_Snps(setKSnps,mapRS2chr,loco);
 	}
 	return;
 }
@@ -1109,6 +1128,8 @@ void PARAM::CheckData (void) {
 	  } else if (file_epm.empty() && a_mode!=43 && a_mode!=5) {
 	    if (!loco.empty())
 	      cout<<"## leave one chromosome out (LOCO) = "<<loco<<endl;
+	    if (setKSnps.size())
+	      cout<<"## number of SNPS for K = "<<setKSnps.size()<<endl;
 	    cout<<"## number of total SNPs = "<<ns_total<<endl;
 	    cout<<"## number of analyzed SNPs = "<<ns_test<<endl;
 	  } else {}
