@@ -34,7 +34,7 @@ void ProgressBar (string str, double p, double total);
 void ProgressBar (string str, double p, double total, double ratio);
 std::istream& safeGetline(std::istream& is, std::string& t);
 
-bool ReadFile_snps (const string &file_snps, set<string> &setSnps);
+bool ReadFile_snps (const string file_snps, set<string> &setSnps);
 bool ReadFile_snps_header (const string &file_snps, set<string> &setSnps);
 bool ReadFile_log (const string &file_log, double &pheno_mean);
 

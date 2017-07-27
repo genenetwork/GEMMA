@@ -127,7 +127,7 @@ std::istream& safeGetline(std::istream& is, std::string& t) {
 }
 
 // Read SNP file.
-bool ReadFile_snps (const string &file_snps, set<string> &setSnps) {
+bool ReadFile_snps (const string file_snps, set<string> &setSnps) {
 	setSnps.clear();
 
 	igzstream infile (file_snps.c_str(), igzstream::in);

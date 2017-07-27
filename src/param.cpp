@@ -94,6 +94,13 @@ void PARAM::ReadFiles (void) {
 		setSnps.clear();
 	}
 
+	// Read KSNP set.
+	if (!file_ksnps.empty()) {
+		if (ReadFile_snps (file_ksnps, setKSnps)==false) {error=true;}
+	} else {
+		setKSnps.clear();
+	}
+
 	// For prediction.
 	if (!file_epm.empty()) {
 		if (ReadFile_est (file_epm, est_column, mapRS2est)==false) {
