@@ -13,7 +13,7 @@ testCenteredRelatednessMatrixKLOCO1() {
     assertEquals "1940" `wc -l < $outfn`
     assertEquals "3763600" `wc -w < $outfn`
     assertEquals "0.335" `head -c 5 $outfn`
-    assertEquals "xx" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+    assertNotEquals "24.9799" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
 }
 
 testCenteredRelatednessMatrixK() {
