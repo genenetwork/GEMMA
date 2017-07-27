@@ -310,8 +310,9 @@ void GEMMA::PrintHelp(size_t option) {
   }
 
   if (option==4) {
-    cout<<" RELATEDNESS MATRIX CALCULATION OPTIONS" << endl;
-    cout<<" -loco     [chr]          "<<" leave one chromosome out (LOCO) by name (also use annotation file)" << endl;
+    cout<<" RELATEDNESS MATRIX (K) CALCULATION OPTIONS" << endl;
+    cout<<" -ksnps    [filename]     "<<" specify input snps file name to compute K"<<endl;
+    cout<<" -loco     [chr]          "<<" leave one chromosome out (LOCO) by name (requires -a annotation file)" << endl;
     cout<<" -a        [filename]     "<<" specify input BIMBAM SNP annotation file name (LOCO only)"<<endl;
     cout<<" -gk       [num]          "<<" specify which type of kinship/relatedness matrix to generate (default 1)" << endl;
     cout<<"          options: 1: centered XX^T/p"<<endl;

@@ -867,7 +867,10 @@ void PARAM::CheckParam (void) {
 	enforce_fexists(file_log,"open file");
 	enforce_fexists(file_anno,"open file");
 
-	if (!loco.empty()) enforce_msg(!file_anno.empty(),"LOCO requires annotation file (-a switch)");
+	if (!loco.empty()) {
+	  enforce_msg(!file_anno.empty(),"LOCO requires annotation file (-a switch)");
+	  enforce_msg(file_ksnps.empty(),"LOCO does not allow -ksnps switch");
+	}
 
 	str=file_kin;
 	if (!str.empty() && stat(str.c_str(),&fileInfo)==-1 ) {
