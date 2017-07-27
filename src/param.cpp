@@ -862,19 +862,11 @@ void PARAM::CheckParam (void) {
 	  error=true;
 	}
 
-	str=file_snps;
-	if (!str.empty() && stat(str.c_str(),&fileInfo)==-1 ) {
-	  cout<<"error! fail to open snps file: "<<str<<endl;
-	  error=true;
-	}
+	enforce_fexists(file_snps,"open file");
+	enforce_fexists(file_ksnps,"open file");
+	enforce_fexists(file_log,"open file");
+	enforce_fexists(file_anno,"open file");
 
-	str=file_log;
-	if (!str.empty() && stat(str.c_str(),&fileInfo)==-1 ) {
-	  cout<<"error! fail to open log file: "<<str<<endl;
-	  error=true;
-	}
-
-	if (!file_anno.empty()) enforce_msg(stat(file_anno.c_str(),&fileInfo)==0,(file_anno+" open annotation file").c_str());
 	if (!loco.empty()) enforce_msg(!file_anno.empty(),"LOCO requires annotation file (-a switch)");
 
 	str=file_kin;

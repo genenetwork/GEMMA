@@ -142,6 +142,7 @@ public:
 	string file_read; // File containing total number of reads.
 	string file_gene; // Gene expression file.
 	string file_snps; // File containing analyzed SNPs or genes.
+	string file_ksnps; // File SNPs for computing K
 
         // WJA added.
 	string file_oxford;
@@ -308,7 +309,7 @@ public:
 	vector<SNPINFO> snpInfo;	 	 // Record SNP information.
 	vector< vector<SNPINFO> > msnpInfo;	 // Record SNP information.
 	set<string> setSnps;			 // Set of snps for analysis.
-	set<string> setKsnps;			 // Set of snps for K (used in LOCO)
+	set<string> setKSnps;			 // Set of snps for K (also used in LOCO)
 
 	// Constructor.
 	PARAM();
@@ -356,5 +357,8 @@ public:
 };
 
 size_t GetabIndex (const size_t a, const size_t b, const size_t n_cvt);
+
+// Helpers for checking parameters
+#define enforce_fexists(fn,msg)	if (!fn.empty()) enforce_msg(stat(fn.c_str(),&fileInfo)==0,((std::string(__STRING(fn))+": "+msg).c_str()));
 
 #endif
