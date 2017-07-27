@@ -1285,7 +1285,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
 	// Create a large matrix.
-	size_t msize=10000;
+	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix_set_zero(Xlarge);
@@ -1440,7 +1440,7 @@ void LMM::AnalyzePlink (const gsl_matrix *U, const gsl_vector *eval,
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
 	// Create a large matrix.
-	size_t msize=10000;
+	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix_set_zero(Xlarge);
@@ -1617,7 +1617,7 @@ void LMM::Analyzebgen (const gsl_matrix *U, const gsl_vector *eval,
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
 	// Create a large matrix.
-	size_t msize=10000;
+	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix_set_zero(Xlarge);
