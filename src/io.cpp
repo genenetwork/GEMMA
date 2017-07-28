@@ -1348,21 +1348,34 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 		  gsl_matrix_set_zero(Xlarge);
 		}
 	}
-
 	if (ns_test%msize!=0) {
 	  eigenlib_dgemm ("N", "T", 1.0, Xlarge, Xlarge, 1.0, matrix_kin);
 	}
 	cout<<endl;
 
 	// finally scale the kinship matrix
-	gsl_matrix_scale (matrix_kin, 1.0/(double)ns_test);
+	enforce_gsl(gsl_matrix_scale (matrix_kin, 1.0/(double)ns_test));
 
+	// and transpose
+	// FIXME: the following is very slow
+	// real    0m24.079s
+	// user    0m23.840s
+	// sys     0m0.828s
+
+	/*
 	for (size_t i=0; i<ni_total; ++i) {
 		for (size_t j=0; j<i; ++j) {
 			d=gsl_matrix_get (matrix_kin, j, i);
 			gsl_matrix_set (matrix_kin, i, j, d);
 		}
 	}
+        */
+	// GSL is faster - and there are even faster methods
+	// real    0m19.882s
+	// user    0m19.764s
+	// sys     0m0.756s
+
+	enforce_gsl(gsl_matrix_transpose(matrix_kin));
 
 	gsl_vector_free (geno);
 	gsl_vector_free (geno_miss);
@@ -3135,7 +3148,7 @@ bool ReadFile_mcat (const string &file_mcat, map<string, size_t> &mapRS2cat,
 // Read bimbam mean genotype file and calculate kinship matrix; this
 // time, the kinship matrix is not centered, and can contain multiple
 // K matrix.
-bool BimbamKin (const string &file_geno, const set<string> ksnps, const int display_pace,
+bool BimbamKinUncentered (const string &file_geno, const set<string> ksnps, const int display_pace,
 		const vector<int> &indicator_idv,
 		const vector<int> &indicator_snp,
 		const map<string, double> &mapRS2weight,
@@ -3570,7 +3583,7 @@ bool MFILEKin (const size_t mfile_mode, const string &file_mfile,
       file_name+=".bed";
       PlinkKin (file_name, display_pace, indicator_idv, mindicator_snp[l], mapRS2weight, mapRS2cat, msnpInfo[l], W, kin_tmp, ns_tmp);
     } else {
-      BimbamKin (file_name, setKSnps, display_pace, indicator_idv, mindicator_snp[l], mapRS2weight, mapRS2cat, msnpInfo[l], W, kin_tmp, ns_tmp);
+      BimbamKinUncentered (file_name, setKSnps, display_pace, indicator_idv, mindicator_snp[l], mapRS2weight, mapRS2cat, msnpInfo[l], W, kin_tmp, ns_tmp);
     }
 
     // Add ns.

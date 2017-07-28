@@ -132,7 +132,7 @@ bool ReadFile_catc (const string &file_cat,
 bool ReadFile_mcatc (const string &file_mcat, map<string,
 		     vector<double> > &mapRS2catc, size_t &n_cat);
 
-bool BimbamKin (const string &file_geno, const set<string> ksnps, const int display_pace,
+bool BimbamKinUncentered (const string &file_geno, const set<string> ksnps, const int display_pace,
 		const vector<int> &indicator_idv,
 		const vector<int> &indicator_snp,
 		const map<string, double> &mapRS2weight,

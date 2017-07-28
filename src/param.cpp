@@ -42,7 +42,6 @@ using namespace std;
 
 void LOCO_set_Snps(set<string> &ksnps, set<string> &snps, const map<string,string> mapchr, const string loco){
   assert(ksnps.size()==0); // make sure it is not initialized twice
-  assert(snps.size()==0);  // make sure it is not initialized twice
   for (auto& kv : mapchr) {
     auto snp = kv.first;
     auto chr = kv.second;
@@ -1697,12 +1696,12 @@ void PARAM::CalcS (const map<string, double> &mapRS2wA,
   } else if (!file_geno.empty()) {
     file_str=file_geno;
     if (mapRS2wA.size()==0) {
-      if (BimbamKin (file_str, setKSnps, d_pace, indicator_idv, indicator_snp,
+      if (BimbamKinUncentered (file_str, setKSnps, d_pace, indicator_idv, indicator_snp,
 		     mapRS2wK, mapRS2cat, snpInfo, W, K, ns)==false) {
 	error=true;
       }
     } else {
-      if (BimbamKin (file_str, setKSnps, d_pace, indicator_idv, indicator_snp,
+      if (BimbamKinUncentered (file_str, setKSnps, d_pace, indicator_idv, indicator_snp,
 		     mapRS2wA, mapRS2cat, snpInfo, W, A, ns)==false) {
 	error=true;
       }
