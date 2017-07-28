@@ -1274,6 +1274,8 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 	size_t n_miss;
 	double d, geno_mean, geno_var;
 
+	bool process_ksnps = ksnps.size();
+
 	size_t ni_total=matrix_kin->size1;
 	gsl_vector *geno=gsl_vector_alloc (ni_total);
 	gsl_vector *geno_miss=gsl_vector_alloc (ni_total);
@@ -1295,7 +1297,7 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 		ch_ptr=strtok ((char *)line.c_str(), " , \t");
 		// check whether SNP is included in ksnps:
 		auto snp = string(ch_ptr);
-		if (ksnps.count(snp) == 0) continue;
+		if (process_ksnps && ksnps.count(snp)==0) continue;
 		ch_ptr=strtok (NULL, " , \t");
 		ch_ptr=strtok (NULL, " , \t");
 
@@ -3186,7 +3188,7 @@ bool BimbamKin (const string &file_geno, const set<string> ksnps, const int disp
 		if (t%display_pace==0 || t==(indicator_snp.size()-1)) {
 		  ProgressBar ("Reading SNPs  ", t, indicator_snp.size()-1);
 		}
-		if (indicator_snp[t]==0) {continue;}
+		if (indicator_snp[t]==0) continue;
 
 		ch_ptr=strtok ((char *)line.c_str(), " , \t");
 		ch_ptr=strtok (NULL, " , \t");
