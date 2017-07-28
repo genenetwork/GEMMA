@@ -1283,6 +1283,8 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 	// Xlarge contains inds x markers
 	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (ni_total, msize);
+	enforce_msg(Xlarge,"allocate Xlarge");
+
 	gsl_matrix_set_zero(Xlarge);
 
 	// For every SNP read the genotype per individual
@@ -1334,10 +1336,10 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 		  gsl_vector_scale (geno, 1.0/sqrt(geno_var));
 		}
 		// set the SNP column ns_test
-		assert(ns_test < MAX_MARKERS);
+		enforce(ns_test < MAX_MARKERS);
 		gsl_vector_view Xlarge_col=
 		  gsl_matrix_column (Xlarge, ns_test%msize);
-		gsl_vector_memcpy (&Xlarge_col.vector, geno);
+		enforce_gsl( gsl_vector_memcpy (&Xlarge_col.vector, geno) );
 
 		ns_test++;
 
@@ -1353,29 +1355,20 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 	}
 	cout<<endl;
 
-	// finally scale the kinship matrix
+	// scale the kinship matrix
 	enforce_gsl(gsl_matrix_scale (matrix_kin, 1.0/(double)ns_test));
 
 	// and transpose
 	// FIXME: the following is very slow
-	// real    0m24.079s
-	// user    0m23.840s
-	// sys     0m0.828s
 
-	/*
 	for (size_t i=0; i<ni_total; ++i) {
 		for (size_t j=0; j<i; ++j) {
 			d=gsl_matrix_get (matrix_kin, j, i);
 			gsl_matrix_set (matrix_kin, i, j, d);
 		}
 	}
-        */
 	// GSL is faster - and there are even faster methods
-	// real    0m19.882s
-	// user    0m19.764s
-	// sys     0m0.756s
-
-	enforce_gsl(gsl_matrix_transpose(matrix_kin));
+	// enforce_gsl(gsl_matrix_transpose(matrix_kin));
 
 	gsl_vector_free (geno);
 	gsl_vector_free (geno_miss);

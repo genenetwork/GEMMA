@@ -40,15 +40,20 @@ using namespace std;
 
 // ---- Helper functions which do not use the PARAM scope
 
-void LOCO_set_Snps(set<string> &ksnps, set<string> &snps, const map<string,string> mapchr, const string loco){
-  assert(ksnps.size()==0); // make sure it is not initialized twice
+// Calculate the SNP sets as used in LOCO from mapchr which was filled
+// from the annotation file. Returns ksnps (used for K) and gwasnps (used for
+// GWA). Both are non-overlapping subsets of setSnps.
+
+void LOCO_set_Snps(set<string> &ksnps, set<string> &gwasnps, const map<string,string> mapchr, const string loco){
+  enforce_msg(ksnps.size()==0,"make sure knsps is not initialized twice");
+  enforce_msg(gwasnps.size()==0,"make sure gwasnps is not initialized twice");
   for (auto& kv : mapchr) {
     auto snp = kv.first;
     auto chr = kv.second;
     if (chr != loco) {
       ksnps.insert(snp);
     } else {
-      snps.insert(snp);
+      gwasnps.insert(snp);
     }
   }
 }

@@ -1419,6 +1419,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 		cout<<"Calculating Relatedness Matrix ... "<<endl;
 
 		gsl_matrix *G=gsl_matrix_alloc (cPar.ni_total, cPar.ni_total);
+		enforce_msg(G,"allocate G");
 
 		time_start=clock();
 		cPar.CalcKin (G);
