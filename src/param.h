@@ -221,7 +221,7 @@ public:
 
         // Number of individuals.
 	size_t ni_total, ni_test, ni_cvt, ni_study, ni_ref;
-	size_t ni_max = SIZE_MAX; // -nind switch for testing purposes
+	size_t ni_max = 0; // -nind switch for testing purposes
 
         // Number of observed and missing phenotypes.
 	size_t np_obs, np_miss;

@@ -58,6 +58,23 @@ void LOCO_set_Snps(set<string> &ksnps, set<string> &gwasnps, const map<string,st
   }
 }
 
+// Trim #individuals to size which is used to write tests that run faster
+
+void trim_individuals(vector<int> &idvs, size_t ni_max) {
+  if (ni_max) {
+    size_t count = 0;
+    for (auto ind = idvs.begin() ; ind != idvs.end(); ++ind) {
+      if (*ind) count++;
+      if (count >= ni_max)
+	break;
+    }
+    if (count != idvs.size()) {
+      cout << "**** WARNING: TEST MODE trim individuals from " << idvs.size() << " to " << count << endl;
+      idvs.resize(count);
+    }
+  }
+}
+
 // ---- PARAM class implementation
 
 PARAM::PARAM(void):
@@ -172,7 +189,6 @@ void PARAM::ReadFiles (void) {
 				if (indicator_pheno[i][j]==0) {k=0;}
 			}
 			indicator_idv.push_back(k);
-			if (i>ni_max) break; // for testing purposes only
 		}
 
 		ns_test=0;
@@ -192,6 +208,7 @@ void PARAM::ReadFiles (void) {
 	} else {
 		n_cvt=1;
 	}
+	trim_individuals(indicator_cvt,ni_max);
 
 	if (!file_gxe.empty() ) {
 	  if (ReadFile_column (file_gxe, indicator_gxe, gxe, 1)==false) {
@@ -204,6 +221,8 @@ void PARAM::ReadFiles (void) {
 	    error=true;
 	  }
 	}
+
+	trim_individuals(indicator_idv, ni_max);
 
 	// WJA added.
 	// Read genotype and phenotype file for bgen format.
@@ -300,6 +319,8 @@ void PARAM::ReadFiles (void) {
 		gsl_matrix *W=gsl_matrix_alloc (ni_test, n_cvt);
 		CopyCvt (W);
 
+		trim_individuals(indicator_idv, ni_max);
+		trim_individuals(indicator_cvt, ni_max);
 		if (ReadFile_geno (file_geno, setSnps, W, indicator_idv,
 				   indicator_snp, maf_level, miss_level,
 				   hwe_level, r2_level, mapRS2chr, mapRS2bp,
@@ -307,6 +328,7 @@ void PARAM::ReadFiles (void) {
 		  error=true;
 		}
 		gsl_matrix_free(W);
+
 		ns_total=indicator_snp.size();
 	}
 
@@ -440,7 +462,6 @@ void PARAM::ReadFiles (void) {
 				if (indicator_pheno[i][j]==0) {k=0;}
 			}
 			indicator_idv.push_back(k);
-			if (i>ni_max) break; // for testing purposes only
 		}
 
 		// Post-process covariates and phenotypes, obtain
@@ -470,7 +491,6 @@ void PARAM::ReadFiles (void) {
 		     ++i) {
 			indicator_idv[i]*=indicator_read[i];
 			ni_test+=indicator_idv[i];
-			if (i>ni_max) break; // for testing purposes only
 		}
 
 		if (ni_test==0) {
@@ -1031,7 +1051,7 @@ void PARAM::CheckData (void) {
        (indicator_cvt).size()!=(indicator_idv).size()) {
     error=true;
     cout << "error! number of rows in the covariates file do not "<<
-      "match the number of individuals. "<<endl;
+      "match the number of individuals. " << indicator_cvt.size() <<endl;
     return;
   }
   if ( (indicator_gxe).size()!=0 && (indicator_gxe).size() !=

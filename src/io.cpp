@@ -653,7 +653,7 @@ bool ReadFile_geno (const string &file_geno, const set<string> &setSnps,
 		c_idv=0; gsl_vector_set_zero (genotype_miss);
 		for (int i=0; i<ni_total; ++i) {
 			ch_ptr=strtok (NULL, " , \t");
-			if (indicator_idv[i]==0) {continue;}
+			if (indicator_idv[i]==0) continue;
 
 			if (strcmp(ch_ptr, "NA")==0) {
 			  gsl_vector_set (genotype_miss, c_idv, 1);
