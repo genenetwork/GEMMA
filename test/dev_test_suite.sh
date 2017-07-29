@@ -5,7 +5,7 @@ gemma=../bin/gemma
 testCenteredRelatednessMatrixKLOCO1() {
     outn=mouse_hs1940_LOCO1
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
-           -a ../example/mouse_hs1940.anno.txt -snps ../example/snps.txt -nind 400 -loco 1 -gk -o $outn
+           -a ../example/mouse_hs1940.anno.txt -snps ../example/snps.txt -nind 400 -loco 1 -gk -debug -o $outn
     assertEquals 0 $?
     grep "total computation time" < output/$outn.log.txt
     outfn=output/$outn.cXX.txt
@@ -23,6 +23,7 @@ testUnivariateLinearMixedModelLOCO1() {
            -a ../example/mouse_hs1940.anno.txt -k ./output/mouse_hs1940_LOCO1.cXX.txt \
 	   -snps ../example/snps.txt -lmm \
 	   -nind 400 \
+	   -debug \
            -o $outn
     assertEquals 0 $?
     grep "total computation time" < output/$outn.log.txt

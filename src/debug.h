@@ -1,8 +1,27 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+extern bool debug; // yes, we use a global for this
+
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
+
+/* This prints an "Assertion failed" message and aborts.  */
+extern "C" void __assert_fail (const char *__assertion, const char *__file,
+                           unsigned int __line, const char *__function)
+     __THROW __attribute__ ((__noreturn__));
+
+
+# if defined __cplusplus ? __GNUC_PREREQ (2, 6) : __GNUC_PREREQ (2, 4)
+#   define __ASSERT_FUNCTION    __PRETTY_FUNCTION__
+# else
+#  if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+#   define __ASSERT_FUNCTION    __func__
+#  else
+#   define __ASSERT_FUNCTION    ((const char *) 0)
+#  endif
+# endif
+
 
 # define enforce(expr)							\
   ((expr)                                                               \

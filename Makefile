@@ -30,7 +30,13 @@ SRC_DIR  = ./src
 
 CPP = g++
 
-CPPFLAGS = -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+ifdef DEBUG
+  # development mode
+  CPPFLAGS = -g -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+else
+  # release
+  CPPFLAGS = -DNDEBUG -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+endif
 
 ifdef SHOW_COMPILER_WARNINGS
   CPPFLAGS += -Wall

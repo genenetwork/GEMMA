@@ -47,6 +47,8 @@
 
 using namespace std;
 
+bool debug = false; // yes, we use a global for this - it is global state
+
 GEMMA::GEMMA(void):
 version("0.97"), date("07/27/2017"), year("2017")
 {}
@@ -152,6 +154,7 @@ void GEMMA::PrintHelp(size_t option) {
     cout<<" 11: obtain predicted values"<<endl;
     cout<<" 12: calculate snp variance covariance"<<endl;
     cout<<" 13: note"<<endl;
+    cout<<" 14: debug options"<<endl;
     cout<<endl;
   }
 
@@ -439,6 +442,13 @@ void GEMMA::PrintHelp(size_t option) {
     cout<<" 3. For lmm analysis, memory should be large enough to hold the relatedness matrix and to perform eigen decomposition."<<endl;
     cout<<" 4. For multivariate lmm analysis, use a large -pnr for each snp will increase computation time dramatically."<<endl;
     cout<<" 5. For bslmm analysis, in addition to 3, memory should be large enough to hold the whole genotype matrix."<<endl;
+    cout<<endl;
+  }
+
+  if (option==14) {
+    cout<<" DEBUG OPTIONS" << endl;
+    cout<<" -debug       			 "<<endl;
+    cout<<" -nind       [num]            "<<" read up to num individuals" << endl;
     cout<<endl;
   }
 
@@ -1177,6 +1187,9 @@ void GEMMA::Assign(int argc, char ** argv, PARAM &cPar) {
 			str.clear();
 			str.assign(argv[i]);
 			cPar.window_ns=atoi(str.c_str());
+		}
+		else if (strcmp(argv[i], "-debug")==0) {
+			debug=true;
 		}
 		else {cout<<"error! unrecognized option: "<<argv[i]<<endl; cPar.error=true; continue;}
 	}

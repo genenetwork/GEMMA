@@ -69,7 +69,8 @@ void trim_individuals(vector<int> &idvs, size_t ni_max) {
 	break;
     }
     if (count != idvs.size()) {
-      cout << "**** WARNING: TEST MODE trim individuals from " << idvs.size() << " to " << count << endl;
+      if (debug)
+	cout << "**** TEST: trim individuals from " << idvs.size() << " to " << count << endl;
       idvs.resize(count);
     }
   }
