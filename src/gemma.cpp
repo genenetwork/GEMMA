@@ -771,7 +771,7 @@ void GEMMA::Assign(int argc, char ** argv, PARAM &cPar) {
 			str.assign(argv[i]);
 			cPar.k_mode=atoi(str.c_str());
 		}
-		else if (strcmp(argv[i], "-n")==0) {
+		else if (strcmp(argv[i], "-n")==0) { // set pheno column (range)
 			(cPar.p_column).clear();
 			while (argv[i+1] != NULL && argv[i+1][0] != '-') {
 				++i;
@@ -990,6 +990,13 @@ void GEMMA::Assign(int argc, char ** argv, PARAM &cPar) {
 			str.clear();
 			str.assign(argv[i]);
 			cPar.nr_iter=atoi(str.c_str());
+		}
+		else if (strcmp(argv[i], "-nind")==0) {
+			if(argv[i+1] == NULL || argv[i+1][0] == '-') {continue;}
+			++i;
+			str.clear();
+			str.assign(argv[i]);
+			cPar.ni_max=atoi(str.c_str()); // for testing purposes
 		}
 		else if (strcmp(argv[i], "-emp")==0) {
 			if(argv[i+1] == NULL || argv[i+1][0] == '-') {continue;}
@@ -2135,6 +2142,17 @@ void GEMMA::BatchRun (PARAM &cPar) {
 		gsl_vector *eval=gsl_vector_alloc (Y->size1);
 		gsl_vector *env=gsl_vector_alloc (Y->size1);
 		gsl_vector *weight=gsl_vector_alloc (Y->size1);
+		enforce_msg(Y,"allocate memory");
+		enforce_msg(W,"allocate memory");
+		enforce_msg(B,"allocate memory");
+		enforce_msg(se_B,"allocate memory");
+		enforce_msg(G,"allocate memory");
+		enforce_msg(U,"allocate memory");
+		enforce_msg(UtW,"allocate memory");
+		enforce_msg(UtY,"allocate memory");
+		enforce_msg(eval,"allocate memory");
+		enforce_msg(env,"allocate memory");
+		enforce_msg(weight,"allocate memory");
 
 		//set covariates matrix W and phenotype matrix Y
 		//an intercept should be included in W,
@@ -2232,7 +2250,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 		  CalcUtX (U, Y, UtY);
 
 			//calculate REMLE/MLE estimate and pve for univariate model
-			if (cPar.n_ph==1) {
+		  if (cPar.n_ph==1) { // one phenotype
 				gsl_vector_view beta=gsl_matrix_row (B, 0);
 				gsl_vector_view se_beta=gsl_matrix_row (se_B, 0);
 				gsl_vector_view UtY_col=gsl_matrix_column (UtY, 0);
@@ -2316,7 +2334,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 					}
 					else {
 					  if (cPar.file_gxe.empty()) {
-					    cLmm.AnalyzeBimbam (U, eval, UtW, &UtY_col.vector, W, &Y_col.vector);
+					    cLmm.AnalyzeBimbam (U, eval, UtW, &UtY_col.vector, W, &Y_col.vector, cPar.setGWASnps);
 					  } else {
 					    cLmm.AnalyzeBimbamGXE (U, eval, UtW, &UtY_col.vector, W, &Y_col.vector, env);
 					  }

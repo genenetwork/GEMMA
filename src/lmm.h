@@ -97,7 +97,8 @@ public:
 			  const gsl_matrix *W, const gsl_vector *y);
 	void AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 			    const gsl_matrix *UtW, const gsl_vector *Uty,
-			    const gsl_matrix *W, const gsl_vector *y);
+			    const gsl_matrix *W, const gsl_vector *y,
+			    const set<string> gwasnps);
 	void AnalyzePlinkGXE (const gsl_matrix *U, const gsl_vector *eval,
 			      const gsl_matrix *UtW, const gsl_vector *Uty,
 			      const gsl_matrix *W, const gsl_vector *y,
@@ -134,5 +135,3 @@ void CalcLmmVgVeBeta (const gsl_vector *eval, const gsl_matrix *UtW,
 		      double &ve, gsl_vector *beta, gsl_vector *se_beta);
 
 #endif
-
-

@@ -635,6 +635,7 @@ bool ReadFile_geno (const string &file_geno, const set<string> &setSnps,
 		major=ch_ptr;
 
 		if (setSnps.size()!=0 && setSnps.count(rs)==0) {
+		  // if SNP in geno but not in -snps we add an missing value
 		  SNPINFO sInfo={"-9", rs, -9, -9, minor, major, 0, -9, -9,
 				 0, 0, file_pos};
 		  snpInfo.push_back(sInfo);
@@ -1263,10 +1264,7 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 		const int k_mode, const int display_pace,
 		gsl_matrix *matrix_kin) {
 	igzstream infile (file_geno.c_str(), igzstream::in);
-	if (!infile) {
-	  cout<<"error reading genotype file:"<<file_geno<<endl;
-	  return false;
-	}
+	enforce_msg(infile,"error reading genotype file");
 
 	string line;
 	char *ch_ptr;
@@ -1274,6 +1272,7 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 	size_t n_miss;
 	double d, geno_mean, geno_var;
 
+	// LOCO support
 	bool process_ksnps = ksnps.size();
 
 	size_t ni_total=matrix_kin->size1;

@@ -1257,12 +1257,10 @@ void LMM::AnalyzeGene (const gsl_matrix *U, const gsl_vector *eval,
 
 void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 			 const gsl_matrix *UtW, const gsl_vector *Uty,
-			 const gsl_matrix *W, const gsl_vector *y) {
+			 const gsl_matrix *W, const gsl_vector *y,
+			 const set<string> gwasnps) {
 	igzstream infile (file_geno.c_str(), igzstream::in);
-	if (!infile) {
-	  cout<<"error reading genotype file:"<<file_geno<<endl;
-	  return;
-	}
+	enforce_msg(infile,"error reading genotype file");
 
 	clock_t time_start=clock();
 
@@ -1274,6 +1272,9 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	double logl_H1=0.0;
 	int n_miss, c_phen;
 	double geno, x_mean;
+
+	// LOCO support
+	bool process_gwasnps = gwasnps.size();
 
 	// Calculate basic quantities.
 	size_t n_index=(n_cvt+2+1)*(n_cvt+2)/2;

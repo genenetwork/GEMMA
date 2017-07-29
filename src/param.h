@@ -145,6 +145,7 @@ public:
 	string file_gene; // Gene expression file.
 	string file_snps; // File containing analyzed SNPs or genes.
 	string file_ksnps; // File SNPs for computing K
+	string file_gwasnps; // File SNPs for computing GWAS
 
         // WJA added.
 	string file_oxford;
@@ -220,6 +221,7 @@ public:
 
         // Number of individuals.
 	size_t ni_total, ni_test, ni_cvt, ni_study, ni_ref;
+	size_t ni_max = SIZE_MAX; // -nind switch for testing purposes
 
         // Number of observed and missing phenotypes.
 	size_t np_obs, np_miss;
@@ -310,8 +312,9 @@ public:
 
 	vector<SNPINFO> snpInfo;	 	 // Record SNP information.
 	vector< vector<SNPINFO> > msnpInfo;	 // Record SNP information.
-	set<string> setSnps;			 // Set of snps for analysis.
-	set<string> setKSnps;			 // Set of snps for K (also used in LOCO)
+	set<string> setSnps;			 // Set of snps for analysis (-snps).
+	set<string> setKSnps;			 // Set of snps for K (-ksnps and LOCO)
+	set<string> setGWASnps;			 // Set of snps for GWA (-gwasnps and LOCO)
 
 	// Constructor.
 	PARAM();

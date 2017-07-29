@@ -42,7 +42,7 @@ using namespace std;
 
 // Calculate the SNP sets as used in LOCO from mapchr which was filled
 // from the annotation file. Returns ksnps (used for K) and gwasnps (used for
-// GWA). Both are non-overlapping subsets of setSnps.
+// GWA). Both are complimentary with each other and subsets of setSnps.
 
 void LOCO_set_Snps(set<string> &ksnps, set<string> &gwasnps, const map<string,string> mapchr, const string loco){
   enforce_msg(ksnps.size()==0,"make sure knsps is not initialized twice");
@@ -172,6 +172,7 @@ void PARAM::ReadFiles (void) {
 				if (indicator_pheno[i][j]==0) {k=0;}
 			}
 			indicator_idv.push_back(k);
+			if (i>ni_max) break; // for testing purposes only
 		}
 
 		ns_test=0;
@@ -439,6 +440,7 @@ void PARAM::ReadFiles (void) {
 				if (indicator_pheno[i][j]==0) {k=0;}
 			}
 			indicator_idv.push_back(k);
+			if (i>ni_max) break; // for testing purposes only
 		}
 
 		// Post-process covariates and phenotypes, obtain
@@ -468,6 +470,7 @@ void PARAM::ReadFiles (void) {
 		     ++i) {
 			indicator_idv[i]*=indicator_read[i];
 			ni_test+=indicator_idv[i];
+			if (i>ni_max) break; // for testing purposes only
 		}
 
 		if (ni_test==0) {
@@ -492,7 +495,7 @@ void PARAM::ReadFiles (void) {
 
 	// Compute setKSnps when -loco is passed in
 	if (!loco.empty()) {
-	        LOCO_set_Snps(setKSnps,setSnps,mapRS2chr,loco);
+	        LOCO_set_Snps(setKSnps,setGWASnps,mapRS2chr,loco);
 	}
 	return;
 }
@@ -898,12 +901,14 @@ void PARAM::CheckParam (void) {
 
 	enforce_fexists(file_snps,"open file");
 	enforce_fexists(file_ksnps,"open file");
+	enforce_fexists(file_gwasnps,"open file");
 	enforce_fexists(file_log,"open file");
 	enforce_fexists(file_anno,"open file");
 
 	if (!loco.empty()) {
 	  enforce_msg(!file_anno.empty(),"LOCO requires annotation file (-a switch)");
 	  enforce_msg(file_ksnps.empty(),"LOCO does not allow -ksnps switch");
+	  enforce_msg(file_gwasnps.empty(),"LOCO does not allow -gwasnps switch");
 	}
 
 	str=file_kin;
@@ -1137,10 +1142,12 @@ void PARAM::CheckData (void) {
 	    if (!loco.empty())
 	      cout<<"## leave one chromosome out (LOCO) = "<<loco<<endl;
 	    cout<<"## number of total SNPs    = "<<ns_total<<endl;
+	    if (setSnps.size())
+	      cout<<"## number of considered SNPS = "<<setSnps.size()<<endl;
 	    if (setKSnps.size())
 	      cout<<"## number of SNPS for K    = "<<setKSnps.size()<<endl;
-	    if (setSnps.size())
-	      cout<<"## number of SNPS for GWAS = "<<setSnps.size()<<endl;
+	    if (setGWASnps.size())
+	      cout<<"## number of SNPS for GWAS = "<<setGWASnps.size()<<endl;
 	    cout<<"## number of analyzed SNPs = "<<ns_test<<endl;
 	  } else {}
 	}
