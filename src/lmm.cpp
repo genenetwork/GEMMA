@@ -167,9 +167,11 @@ void LMM::WriteFiles () {
 
 		size_t t=0;
 		for (size_t i=0; i<snpInfo.size(); ++i) {
-		  cout << "******************************" << endl;
 
-			if (indicator_snp[i]==0 || !process_gwasnps) continue;
+			if (indicator_snp[i]==0) continue;
+			auto snp = snpInfo[i].rs_number;
+			if (process_gwasnps && setGWASnps.count(snp)==0) continue;
+			cout << t << endl;
 
 			outfile<<snpInfo[i].chr<<"\t"<<snpInfo[i].rs_number<<
 			  "\t"<<snpInfo[i].base_position<<"\t"<<
@@ -1284,20 +1286,19 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	// Calculate basic quantities.
 	size_t n_index=(n_cvt+2+1)*(n_cvt+2)/2;
 
-	gsl_vector *x=gsl_vector_alloc (U->size1);
+	gsl_vector *x=gsl_vector_alloc (U->size1); // sized #phenotypes
 	gsl_vector *x_miss=gsl_vector_alloc (U->size1);
 	gsl_vector *Utx=gsl_vector_alloc (U->size2);
 	gsl_matrix *Uab=gsl_matrix_alloc (U->size2, n_index);
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
-	// Create a large matrix.
+	// Create a large matrix with MAX_MARKERS columns
 	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
 
-	enforce_msg(Xlarge,"Xlarge memory check"); // just to be sure
+	enforce_msg(Xlarge && UtXlarge,"Xlarge memory check"); // just to be sure
 	gsl_matrix_set_zero(Xlarge);
-
 	gsl_matrix_set_zero (Uab);
 	CalcUab (UtW, Uty, Uab);
 
@@ -1349,14 +1350,17 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 			}
 		}
 
+		enforce_msg(c < MAX_MARKERS, "Xlarge bounds check");
 		gsl_vector_view Xlarge_col=gsl_matrix_column (Xlarge, c%msize);
 		gsl_vector_memcpy (&Xlarge_col.vector, x);
 		c++; // count SNPs going in
 
-		// msize = MAX_MARKERS - i.e. row size in Xlarge
+		// msize = MAX_MARKERS - i.e. #cols or row size in Xlarge
 		if (c%msize==0 || c==t_last || process_gwasnps) {
-		  // c%msize==0 is when we hit the start of a new SNP column
-		  // not sure this is correct since it is a fixed number!
+		  // c%msize==0 is when we hit the start of a new SNP row
+		  // We are going by t_last batch which is larger then
+		  // snpSet, so in the case of process_gwasnps we go
+		  // 1 by 1 (which is slower) FIXME
 		  size_t l=0; // l is row size (# of elements left)
 		  if (c%msize==0) {l=msize;} else {l=c%msize;}
 		  if (process_gwasnps) l = 1;
@@ -1406,6 +1410,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		      (double(CLOCKS_PER_SEC)*60.0);
 
 		    // Store summary data.
+		    cout << snp << " " << beta << ":" << p_lrt << endl;
 		    SUMSTAT SNPs={beta, se, lambda_remle, lambda_mle,
 				  p_wald, p_lrt, p_score};
 

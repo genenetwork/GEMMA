@@ -3,6 +3,7 @@
 gemma=../bin/gemma
 
 testCenteredRelatednessMatrixKFullLOCO1() {
+    return
     outn=mouse_hs1940_full_LOCO1
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
            -a ../example/mouse_hs1940.anno.txt -loco 1 -gk -debug -o $outn
@@ -17,6 +18,7 @@ testCenteredRelatednessMatrixKFullLOCO1() {
 }
 
 testUnivariateLinearMixedModelFullLOCO1() {
+    return
     outn=mouse_hs1940_CD8_full_LOCO1_lmm
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
 	   -n 1 \
