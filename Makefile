@@ -112,11 +112,11 @@ $(OBJS) : $(HDR)
 	$(CPP) $(CPPFLAGS) $(HEADERS) -c $*.cpp -o $*.o
 .SUFFIXES : .cpp .c .o $(SUFFIXES)
 
-dev-check: all
+fast-check: all
 	cd test && ./dev_test_suite.sh | tee ../dev_test.log
 	grep -q 'success rate: 100%' dev_test.log
 
-check: all dev-check
+check: all fast-check
 	cd test && ./test_suite.sh | tee ../test.log
 	grep -q 'success rate: 100%' test.log
 

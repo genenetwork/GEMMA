@@ -47,8 +47,6 @@
 
 using namespace std;
 
-bool debug = false; // yes, we use a global for this - it is global state
-
 GEMMA::GEMMA(void):
 version("0.97"), date("07/27/2017"), year("2017")
 {}
@@ -447,8 +445,9 @@ void GEMMA::PrintHelp(size_t option) {
 
   if (option==14) {
     cout<<" DEBUG OPTIONS" << endl;
-    cout<<" -debug       			 "<<endl;
-    cout<<" -nind       [num]            "<<" read up to num individuals" << endl;
+    cout<<" -silence                 silent terminal display"<<endl;
+    cout<<" -debug                   debug output"<<endl;
+    cout<<" -nind       [num]        read up to num individuals" << endl;
     cout<<endl;
   }
 
@@ -1189,7 +1188,7 @@ void GEMMA::Assign(int argc, char ** argv, PARAM &cPar) {
 			cPar.window_ns=atoi(str.c_str());
 		}
 		else if (strcmp(argv[i], "-debug")==0) {
-			debug=true;
+			cPar.mode_debug=true;
 		}
 		else {cout<<"error! unrecognized option: "<<argv[i]<<endl; cPar.error=true; continue;}
 	}

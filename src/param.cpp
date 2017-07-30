@@ -59,8 +59,12 @@ void LOCO_set_Snps(set<string> &ksnps, set<string> &gwasnps, const map<string,st
 }
 
 // Trim #individuals to size which is used to write tests that run faster
+//
+// Note it actually trims the number of functional individuals
+// (indicator_idv[x] == 1). This should match indicator_cvt etc. If
+// this gives problems with certain sets we can simply trim to size.
 
-void trim_individuals(vector<int> &idvs, size_t ni_max) {
+void trim_individuals(vector<int> &idvs, size_t ni_max, bool debug) {
   if (ni_max) {
     size_t count = 0;
     for (auto ind = idvs.begin() ; ind != idvs.end(); ++ind) {
@@ -70,7 +74,7 @@ void trim_individuals(vector<int> &idvs, size_t ni_max) {
     }
     if (count != idvs.size()) {
       if (debug)
-	cout << "**** TEST: trim individuals from " << idvs.size() << " to " << count << endl;
+	cout << "**** TEST MODE: trim individuals from " << idvs.size() << " to " << count << endl;
       idvs.resize(count);
     }
   }
@@ -209,7 +213,7 @@ void PARAM::ReadFiles (void) {
 	} else {
 		n_cvt=1;
 	}
-	trim_individuals(indicator_cvt,ni_max);
+	trim_individuals(indicator_cvt,ni_max,mode_debug);
 
 	if (!file_gxe.empty() ) {
 	  if (ReadFile_column (file_gxe, indicator_gxe, gxe, 1)==false) {
@@ -223,7 +227,7 @@ void PARAM::ReadFiles (void) {
 	  }
 	}
 
-	trim_individuals(indicator_idv, ni_max);
+	trim_individuals(indicator_idv, ni_max,mode_debug);
 
 	// WJA added.
 	// Read genotype and phenotype file for bgen format.
@@ -320,8 +324,8 @@ void PARAM::ReadFiles (void) {
 		gsl_matrix *W=gsl_matrix_alloc (ni_test, n_cvt);
 		CopyCvt (W);
 
-		trim_individuals(indicator_idv, ni_max);
-		trim_individuals(indicator_cvt, ni_max);
+		trim_individuals(indicator_idv, ni_max, mode_debug);
+		trim_individuals(indicator_cvt, ni_max, mode_debug);
 		if (ReadFile_geno (file_geno, setSnps, W, indicator_idv,
 				   indicator_snp, maf_level, miss_level,
 				   hwe_level, r2_level, mapRS2chr, mapRS2bp,

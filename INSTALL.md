@@ -53,16 +53,24 @@ Install listed dependencies and run
 (the -j switch builds on 4 cores).
 
 if you get an Eigen error you may need to override the include
-path. E.g. on GNU Guix with shared libs the following may work
+path. E.g. on GNU Guix with shared libs and DEBUG the following may
+work
 
-    make EIGEN_INCLUDE_PATH=~/.guix-profile/include/eigen3 FORCE_DYNAMIC=1 WITH_OPENBLAS=1
+	make EIGEN_INCLUDE_PATH=~/.guix-profile/include/eigen3 FORCE_DYNAMIC=1 WITH_OPENBLAS=1 DEBUG=1
 
 to run GEMMA tests
 
-    make check
+	time make check
+
+You can run gemma in the debugger with, for example
+
+	gdb --args \
+		./bin/gemma -g example/mouse_hs1940.geno.txt.gz \
+		-p example/mouse_hs1940.pheno.txt -a example/mouse_hs1940.anno.txt \
+		-snps example/snps.txt -nind 400 -loco 1 -gk -debug -o myoutput
 
 Other options, such as compiling with warnings, are listed in the
-Makefile
+Makefile.
 
 ## Run tests
 
