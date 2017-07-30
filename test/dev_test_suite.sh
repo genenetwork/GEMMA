@@ -30,8 +30,8 @@ testUnivariateLinearMixedModelLOCO1() {
     grep "total computation time" < output/$outn.log.txt
     assertEquals 0 $?
     outfn=output/$outn.assoc.txt
-    assertEquals "9790" `wc -w < $outfn`
-    assertEquals "7590" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+    assertEquals "748" `wc -w < $outfn`
+    assertEquals "67" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
 }
 
 shunit2=`which shunit2`

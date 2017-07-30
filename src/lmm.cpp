@@ -171,7 +171,7 @@ void LMM::WriteFiles () {
 			if (indicator_snp[i]==0) continue;
 			auto snp = snpInfo[i].rs_number;
 			if (process_gwasnps && setGWASnps.count(snp)==0) continue;
-			cout << t << endl;
+			// cout << t << endl;
 
 			outfile<<snpInfo[i].chr<<"\t"<<snpInfo[i].rs_number<<
 			  "\t"<<snpInfo[i].base_position<<"\t"<<
@@ -1319,7 +1319,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		ch_ptr=strtok ((char *)line.c_str(), " , \t");
 		auto snp = string(ch_ptr);
 		// check whether SNP is included in gwasnps (used by LOCO)
-		if (process_gwasnps && gwasnps.count(snp)==0) continue;
+		// if (process_gwasnps && gwasnps.count(snp)==0) continue;
 		ch_ptr=strtok (NULL, " , \t");
 		ch_ptr=strtok (NULL, " , \t");
 
@@ -1356,14 +1356,14 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		c++; // count SNPs going in
 
 		// msize = MAX_MARKERS - i.e. #cols or row size in Xlarge
-		if (c%msize==0 || c==t_last || process_gwasnps) {
+		if (c%msize==0 || c==t_last) {
 		  // c%msize==0 is when we hit the start of a new SNP row
 		  // We are going by t_last batch which is larger then
 		  // snpSet, so in the case of process_gwasnps we go
 		  // 1 by 1 (which is slower) FIXME
 		  size_t l=0; // l is row size (# of elements left)
 		  if (c%msize==0) {l=msize;} else {l=c%msize;}
-		  if (process_gwasnps) l = 1;
+		  // if (process_gwasnps) l = 1;
 
 		  gsl_matrix_view Xlarge_sub=
 		    gsl_matrix_submatrix(Xlarge, 0, 0, Xlarge->size1, l);
@@ -1410,7 +1410,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		      (double(CLOCKS_PER_SEC)*60.0);
 
 		    // Store summary data.
-		    cout << snp << " " << beta << ":" << p_lrt << endl;
+		    // cout << snp << " " << beta << ":" << p_lrt << endl;
 		    SUMSTAT SNPs={beta, se, lambda_remle, lambda_mle,
 				  p_wald, p_lrt, p_score};
 
