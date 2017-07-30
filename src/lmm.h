@@ -78,6 +78,7 @@ public:
 	vector<int> indicator_snp;
 
 	vector<SNPINFO> snpInfo;  // Record SNP information.
+	set<string> setGWASnps;  // Record SNP information.
 
 	// Not included in PARAM.
 	vector<SUMSTAT> sumStat;  // Output SNPSummary Data.

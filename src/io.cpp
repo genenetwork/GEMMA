@@ -1272,7 +1272,7 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 	size_t n_miss;
 	double d, geno_mean, geno_var;
 
-	// LOCO support
+	// setKSnp and/or LOCO support
 	bool process_ksnps = ksnps.size();
 
 	size_t ni_total=matrix_kin->size1;
@@ -1296,8 +1296,8 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 		if (indicator_snp[t]==0) continue;
 
 		ch_ptr=strtok ((char *)line.c_str(), " , \t");
-		// check whether SNP is included in ksnps:
 		auto snp = string(ch_ptr);
+		// check whether SNP is included in ksnps (used by LOCO)
 		if (process_ksnps && ksnps.count(snp)==0) continue;
 		ch_ptr=strtok (NULL, " , \t");
 		ch_ptr=strtok (NULL, " , \t");

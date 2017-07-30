@@ -116,9 +116,11 @@ fast-check: all
 	cd test && ./dev_test_suite.sh | tee ../dev_test.log
 	grep -q 'success rate: 100%' dev_test.log
 
-check: all fast-check
+slow-check: all
 	cd test && ./test_suite.sh | tee ../test.log
 	grep -q 'success rate: 100%' test.log
+
+check: fast-check slow-check
 
 clean:
 	rm -rf ${SRC_DIR}/*.o ${SRC_DIR}/*~ *~ $(OUTPUT)

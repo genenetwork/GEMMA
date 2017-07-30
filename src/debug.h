@@ -1,10 +1,14 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
-extern bool debug; // yes, we use a global for this
-
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
+
+# if defined NDEBUG
+# define debug_msg(msg)
+# else
+# define debug_msg(msg) cout << "**** DEBUG: " << msg << endl;
+# endif
 
 /* This prints an "Assertion failed" message and aborts.  */
 extern "C" void __assert_fail (const char *__assertion, const char *__file,

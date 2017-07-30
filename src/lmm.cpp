@@ -80,6 +80,7 @@ void LMM::CopyFromParam (PARAM &cPar) {
 	indicator_idv=cPar.indicator_idv;
 	indicator_snp=cPar.indicator_snp;
 	snpInfo=cPar.snpInfo;
+	setGWASnps=cPar.setGWASnps;
 
 	return;
 }
@@ -147,6 +148,7 @@ void LMM::WriteFiles () {
 			} else {}
 		}
 	}  else {
+	        bool process_gwasnps = setGWASnps.size();
 		outfile<<"chr"<<"\t"<<"rs"<<"\t"<<"ps"<<"\t"<<"n_miss"<<"\t"
 		       <<"allele1"<<"\t"<<"allele0"<<"\t"<<"af"<<"\t";
 
@@ -165,7 +167,9 @@ void LMM::WriteFiles () {
 
 		size_t t=0;
 		for (size_t i=0; i<snpInfo.size(); ++i) {
-			if (indicator_snp[i]==0) {continue;}
+		  cout << "******************************" << endl;
+
+			if (indicator_snp[i]==0 || !process_gwasnps) continue;
 
 			outfile<<snpInfo[i].chr<<"\t"<<snpInfo[i].rs_number<<
 			  "\t"<<snpInfo[i].base_position<<"\t"<<
@@ -1275,6 +1279,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 
 	// LOCO support
 	bool process_gwasnps = gwasnps.size();
+	if (process_gwasnps) debug_msg("AnalyzeBimbam w. LOCO");
 
 	// Calculate basic quantities.
 	size_t n_index=(n_cvt+2+1)*(n_cvt+2)/2;
@@ -1289,6 +1294,8 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	size_t msize=MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
+
+	enforce_msg(Xlarge,"Xlarge memory check"); // just to be sure
 	gsl_matrix_set_zero(Xlarge);
 
 	gsl_matrix_set_zero (Uab);
@@ -1297,17 +1304,21 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	//start reading genotypes and analyze
 	size_t c=0, t_last=0;
 	for (size_t t=0; t<indicator_snp.size(); ++t) {
-	  if (indicator_snp[t]==0) {continue;}
+	  if (indicator_snp[t]==0) continue;
 	  t_last++;
 	}
+	cout << "setGWASnps=" << gwasnps.size() << " SNPs=" << indicator_snp.size() << " t_last=" << t_last << endl;
 	for (size_t t=0; t<indicator_snp.size(); ++t) {
 		!safeGetline(infile, line).eof();
 		if (t%d_pace==0 || t==(ns_total-1)) {
 		  ProgressBar ("Reading SNPs  ", t, ns_total-1);
 		}
-		if (indicator_snp[t]==0) {continue;}
+		if (indicator_snp[t]==0) continue;
 
 		ch_ptr=strtok ((char *)line.c_str(), " , \t");
+		auto snp = string(ch_ptr);
+		// check whether SNP is included in gwasnps (used by LOCO)
+		if (process_gwasnps && gwasnps.count(snp)==0) continue;
 		ch_ptr=strtok (NULL, " , \t");
 		ch_ptr=strtok (NULL, " , \t");
 
@@ -1315,7 +1326,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		gsl_vector_set_zero(x_miss);
 		for (size_t i=0; i<ni_total; ++i) {
 			ch_ptr=strtok (NULL, " , \t");
-			if (indicator_idv[i]==0) {continue;}
+			if (indicator_idv[i]==0) continue;
 
 			if (strcmp(ch_ptr, "NA")==0) {
 			  gsl_vector_set(x_miss, c_phen, 0.0); n_miss++;
@@ -1340,11 +1351,15 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 
 		gsl_vector_view Xlarge_col=gsl_matrix_column (Xlarge, c%msize);
 		gsl_vector_memcpy (&Xlarge_col.vector, x);
-		c++;
+		c++; // count SNPs going in
 
-		if (c%msize==0 || c==t_last) {
-		  size_t l=0;
+		// msize = MAX_MARKERS - i.e. row size in Xlarge
+		if (c%msize==0 || c==t_last || process_gwasnps) {
+		  // c%msize==0 is when we hit the start of a new SNP column
+		  // not sure this is correct since it is a fixed number!
+		  size_t l=0; // l is row size (# of elements left)
 		  if (c%msize==0) {l=msize;} else {l=c%msize;}
+		  if (process_gwasnps) l = 1;
 
 		  gsl_matrix_view Xlarge_sub=
 		    gsl_matrix_submatrix(Xlarge, 0, 0, Xlarge->size1, l);
@@ -1359,6 +1374,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		  gsl_matrix_set_zero (Xlarge);
 
 		  for (size_t i=0; i<l; i++) {
+		    // for every batch...
 		    gsl_vector_view UtXlarge_col=
 		      gsl_matrix_column (UtXlarge, i);
 		    gsl_vector_memcpy (Utx, &UtXlarge_col.vector);
@@ -1394,9 +1410,10 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 				  p_wald, p_lrt, p_score};
 
 		    sumStat.push_back(SNPs);
-		  }
 		}
+	      }
 	}
+	cout << "Counted SNPs " << c << " sumStat " << sumStat.size() << endl;
 	cout<<endl;
 
 	gsl_vector_free (x);
@@ -1461,7 +1478,7 @@ void LMM::AnalyzePlink (const gsl_matrix *U, const gsl_vector *eval,
 
 	size_t c=0, t_last=0;
 	for (size_t t=0; t<snpInfo.size(); ++t) {
-	  if (indicator_snp[t]==0) {continue;}
+	  if (indicator_snp[t]==0) continue;
 	  t_last++;
 	}
 	for (vector<SNPINFO>::size_type t=0; t<snpInfo.size(); ++t) {

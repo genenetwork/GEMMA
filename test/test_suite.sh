@@ -2,6 +2,37 @@
 
 gemma=../bin/gemma
 
+testCenteredRelatednessMatrixKFullLOCO1() {
+    outn=mouse_hs1940_full_LOCO1
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
+           -a ../example/mouse_hs1940.anno.txt -loco 1 -gk -debug -o $outn
+    assertEquals 0 $?
+    grep "total computation time" < output/$outn.log.txt
+    outfn=output/$outn.cXX.txt
+    assertEquals 0 $?
+    assertEquals "400" `wc -l < $outfn`
+    assertEquals "160000" `wc -w < $outfn`
+    assertEquals "0.312" `head -c 5 $outfn`
+    assertEquals "-72508" `perl -nle '$sum += substr($_,0,6)*10000 } END { print $sum' $outfn`
+}
+
+testUnivariateLinearMixedModelFullLOCO1() {
+    outn=mouse_hs1940_CD8_full_LOCO1_lmm
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
+	   -n 1 \
+	   -loco 1 \
+           -a ../example/mouse_hs1940.anno.txt -k ./output/mouse_hs1940_full_LOCO1.cXX.txt \
+	   -lmm \
+	   -debug \
+           -o $outn
+    assertEquals 0 $?
+    grep "total computation time" < output/$outn.log.txt
+    assertEquals 0 $?
+    outfn=output/$outn.assoc.txt
+    assertEquals "9790" `wc -w < $outfn`
+    assertEquals "7590" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+}
+
 testCenteredRelatednessMatrixK() {
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
            -gk -o mouse_hs1940

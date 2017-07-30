@@ -1438,7 +1438,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 		cout<<"Calculating Relatedness Matrix ... "<<endl;
 
 		gsl_matrix *G=gsl_matrix_alloc (cPar.ni_total, cPar.ni_total);
-		enforce_msg(G,"allocate G");
+		enforce_msg(G,"allocate G"); // just to be sure
 
 		time_start=clock();
 		cPar.CalcKin (G);
@@ -2144,6 +2144,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 	//LMM or mvLMM or Eigen-Decomposition
 	if (cPar.a_mode==1 || cPar.a_mode==2 || cPar.a_mode==3 || cPar.a_mode==4 || cPar.a_mode==5 || cPar.a_mode==31) {  //Fit LMM or mvLMM or eigen
 		gsl_matrix *Y=gsl_matrix_alloc (cPar.ni_test, cPar.n_ph);
+		enforce_msg(Y,"allocate Y");  // just to be sure
 		gsl_matrix *W=gsl_matrix_alloc (Y->size1, cPar.n_cvt);
 		gsl_matrix *B=gsl_matrix_alloc (Y->size2, W->size2);	//B is a d by c matrix
 		gsl_matrix *se_B=gsl_matrix_alloc (Y->size2, W->size2);
@@ -2154,17 +2155,6 @@ void GEMMA::BatchRun (PARAM &cPar) {
 		gsl_vector *eval=gsl_vector_alloc (Y->size1);
 		gsl_vector *env=gsl_vector_alloc (Y->size1);
 		gsl_vector *weight=gsl_vector_alloc (Y->size1);
-		enforce_msg(Y,"allocate memory");
-		enforce_msg(W,"allocate memory");
-		enforce_msg(B,"allocate memory");
-		enforce_msg(se_B,"allocate memory");
-		enforce_msg(G,"allocate memory");
-		enforce_msg(U,"allocate memory");
-		enforce_msg(UtW,"allocate memory");
-		enforce_msg(UtY,"allocate memory");
-		enforce_msg(eval,"allocate memory");
-		enforce_msg(env,"allocate memory");
-		enforce_msg(weight,"allocate memory");
 
 		//set covariates matrix W and phenotype matrix Y
 		//an intercept should be included in W,
@@ -2261,7 +2251,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 		  CalcUtX (U, W, UtW);
 		  CalcUtX (U, Y, UtY);
 
-			//calculate REMLE/MLE estimate and pve for univariate model
+		  //calculate REMLE/MLE estimate and pve for univariate model
 		  if (cPar.n_ph==1) { // one phenotype
 				gsl_vector_view beta=gsl_matrix_row (B, 0);
 				gsl_vector_view se_beta=gsl_matrix_row (se_B, 0);
@@ -2324,7 +2314,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 				}
 			}
 
-			//Fit LMM or mvLMM
+			//Fit LMM or mvLMM (w. LOCO)
 			if (cPar.a_mode==1 || cPar.a_mode==2 || cPar.a_mode==3 || cPar.a_mode==4) {
 				if (cPar.n_ph==1) {
 					LMM cLmm;
@@ -2346,6 +2336,7 @@ void GEMMA::BatchRun (PARAM &cPar) {
 					}
 					else {
 					  if (cPar.file_gxe.empty()) {
+					    // adding LOCO support
 					    cLmm.AnalyzeBimbam (U, eval, UtW, &UtY_col.vector, W, &Y_col.vector, cPar.setGWASnps);
 					  } else {
 					    cLmm.AnalyzeBimbamGXE (U, eval, UtW, &UtY_col.vector, W, &Y_col.vector, env);

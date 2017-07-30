@@ -20,6 +20,7 @@ testUnivariateLinearMixedModelLOCO1() {
     outn=mouse_hs1940_CD8_LOCO1_lmm
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
 	   -n 1 \
+	   -loco 1 \
            -a ../example/mouse_hs1940.anno.txt -k ./output/mouse_hs1940_LOCO1.cXX.txt \
 	   -snps ../example/snps.txt -lmm \
 	   -nind 400 \
