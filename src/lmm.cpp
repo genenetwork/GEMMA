@@ -1265,9 +1265,6 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 			 const gsl_matrix *UtW, const gsl_vector *Uty,
 			 const gsl_matrix *W, const gsl_vector *y,
 			 const set<string> gwasnps) {
-	igzstream infile (file_geno.c_str(), igzstream::in);
-	enforce_msg(infile,"error reading genotype file");
-
 	clock_t time_start=clock();
 
 	// LOCO support
@@ -1285,7 +1282,8 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
 	// Create a large matrix with LMM_MAX_MARKERS columns for batched processing
-	const size_t msize=(process_gwasnps ? 1 : LMM_MAX_MARKERS);
+	// const size_t msize=(process_gwasnps ? 1 : LMM_MAX_MARKERS);
+	const size_t msize=LMM_MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (inds, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (inds, msize);
 
@@ -1296,11 +1294,33 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 
 	//start reading genotypes and analyze
 	size_t c=0, t_last=0;
-	for (size_t t=0; t<indicator_snp.size(); ++t) {
-	  if (indicator_snp[t]==0) continue;
-	  t_last++;
+
+	// Count number of SNPS to process
+	if (process_gwasnps) {
+	  // for these we have to reparse the genotype file, sadly
+	  igzstream gfile(file_geno.c_str(), igzstream::in);
+	  for (size_t t=0; t<indicator_snp.size(); ++t) {
+	    string line;
+	    safeGetline(gfile, line);
+	    char *ch_ptr1=strtok ((char *)line.c_str(), " , \t");
+	    auto snp = string(ch_ptr1);
+	    // check whether SNP is included in gwasnps (used by LOCO)
+	    if (process_gwasnps && gwasnps.count(snp)==0) continue;
+	    if (indicator_snp[t]==0) continue;
+	    t_last++;
+	  }
+	  gfile.close();
+	}
+	else {
+	  for (size_t t=0; t<indicator_snp.size(); ++t) {
+	    if (indicator_snp[t]==0) continue;
+	    t_last++;
+	  }
 	}
 	cout << "setGWASnps=" << gwasnps.size() << " SNPs=" << indicator_snp.size() << " t_last=" << t_last << endl;
+	igzstream infile(file_geno.c_str(), igzstream::in);
+	enforce_msg(infile,"error reading genotype file");
+
 	for (size_t t=0; t<indicator_snp.size(); ++t) {
 	        // for every SNP
 	        string line;
@@ -1407,10 +1427,8 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		      (double(CLOCKS_PER_SEC)*60.0);
 
 		    // Store summary data.
-		    // cout << snp << " " << beta << ":" << p_lrt << endl;
 		    SUMSTAT SNPs={beta, se, lambda_remle, lambda_mle,
 				  p_wald, p_lrt, p_score};
-
 		    sumStat.push_back(SNPs);
 		}
 	      }
