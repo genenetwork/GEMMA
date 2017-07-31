@@ -26,7 +26,7 @@
 #include "gsl/gsl_matrix.h"
 #include "debug.h"
 
-#define MAX_MARKERS 30000 // original value may be too small!
+#define MAX_MARKERS 10000 // used for batched processing
 
 using namespace std;
 

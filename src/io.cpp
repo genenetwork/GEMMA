@@ -1335,7 +1335,6 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 		  gsl_vector_scale (geno, 1.0/sqrt(geno_var));
 		}
 		// set the SNP column ns_test
-		enforce(ns_test < MAX_MARKERS);
 		gsl_vector_view Xlarge_col=
 		  gsl_matrix_column (Xlarge, ns_test%msize);
 		enforce_gsl( gsl_vector_memcpy (&Xlarge_col.vector, geno) );
@@ -1477,7 +1476,6 @@ bool PlinkKin (const string &file_bed, vector<int> &indicator_snp,
 		if (k_mode==2 && geno_var!=0) {
 		  gsl_vector_scale (geno, 1.0/sqrt(geno_var));
 		}
-		assert(ns_test < MAX_MARKERS);
 		gsl_vector_view Xlarge_col=
 		  gsl_matrix_column (Xlarge, ns_test%msize);
 		gsl_vector_memcpy (&Xlarge_col.vector, geno);
