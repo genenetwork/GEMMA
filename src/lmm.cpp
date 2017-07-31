@@ -1277,16 +1277,17 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	// Calculate basic quantities.
 	size_t n_index=(n_cvt+2+1)*(n_cvt+2)/2;
 
-	gsl_vector *x=gsl_vector_alloc (U->size1); // #inds
-	gsl_vector *x_miss=gsl_vector_alloc (U->size1);
+	const size_t inds = U->size1;
+	gsl_vector *x=gsl_vector_alloc (inds); // #inds
+	gsl_vector *x_miss=gsl_vector_alloc (inds);
 	gsl_vector *Utx=gsl_vector_alloc (U->size2);
 	gsl_matrix *Uab=gsl_matrix_alloc (U->size2, n_index);
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
-	// Create a large matrix with MAX_MARKERS columns for batched processing
-	size_t msize=MAX_MARKERS;
-	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
-	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
+	// Create a large matrix with LMM_MAX_MARKERS columns for batched processing
+	const size_t msize=(process_gwasnps ? 1 : LMM_MAX_MARKERS);
+	gsl_matrix *Xlarge=gsl_matrix_alloc (inds, msize);
+	gsl_matrix *UtXlarge=gsl_matrix_alloc (inds, msize);
 
 	enforce_msg(Xlarge && UtXlarge,"Xlarge memory check"); // just to be sure
 	gsl_matrix_set_zero(Xlarge);
@@ -1303,33 +1304,36 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	for (size_t t=0; t<indicator_snp.size(); ++t) {
 	        // for every SNP
 	        string line;
-		!safeGetline(infile, line).eof();
+		safeGetline(infile, line);
 		if (t%d_pace==0 || t==(ns_total-1)) {
 		  ProgressBar ("Reading SNPs  ", t, ns_total-1);
 		}
 		if (indicator_snp[t]==0) continue;
 
 		char *ch_ptr=strtok ((char *)line.c_str(), " , \t");
-		// auto snp = string(ch_ptr);
+		auto snp = string(ch_ptr);
 		// check whether SNP is included in gwasnps (used by LOCO)
+		if (process_gwasnps && gwasnps.count(snp)==0) continue;
 		ch_ptr=strtok (NULL, " , \t");
 		ch_ptr=strtok (NULL, " , \t");
 
 		double x_mean=0.0; int c_phen=0; int n_miss=0;
 		gsl_vector_set_zero(x_miss);
 		for (size_t i=0; i<ni_total; ++i) {
+   		        // get the genotypes per individual and compute stats per SNP
 			ch_ptr=strtok (NULL, " , \t");
 			if (indicator_idv[i]==0) continue;
 
 			if (strcmp(ch_ptr, "NA")==0) {
-			  gsl_vector_set(x_miss, c_phen, 0.0); n_miss++;
+			  gsl_vector_set(x_miss, c_phen, 0.0);
+			  n_miss++;
 			}
 			else {
 				double geno=atof(ch_ptr);
 
 				gsl_vector_set(x, c_phen, geno);
 				gsl_vector_set(x_miss, c_phen, 1.0);
-				x_mean+=geno;
+				x_mean += geno;
 			}
 			c_phen++;
 		}
@@ -1342,38 +1346,34 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 			}
 		}
 
+		// copy genotype values for SNP into Xlarge
 		gsl_vector_view Xlarge_col=gsl_matrix_column (Xlarge, c%msize);
 		gsl_vector_memcpy (&Xlarge_col.vector, x);
-		// if (process_gwasnps && gwasnps.count(snp)==0) continue;
 		c++; // count SNPs going in
 
-		// msize = MAX_MARKERS - i.e. #cols or row size in Xlarge
+		// c is SNP (or column), msize = LMM_MAX_MARKERS
+		// c%msize==0 is when we hit the start of a new SNP
+		// batch:
 		if (c%msize==0 || c==t_last) {
-		  // c%msize==0 is when we hit the start of a new SNP row
-		  // We are going by t_last batch which is larger then
-		  // snpSet, so in the case of process_gwasnps we go
-		  // 1 by 1 (which is slower) FIXME
-		  size_t l=0; // l is row size (# of elements left)
-		  if (c%msize==0) {l=msize;} else {l=c%msize;}
+		  const size_t l = (c%msize==0 ? msize // all snps
+				    : c%msize); // remaining snps in buffer
 		  // if (process_gwasnps) l = 1;
 
-		  gsl_matrix_view Xlarge_sub=
-		    gsl_matrix_submatrix(Xlarge, 0, 0, Xlarge->size1, l);
-		  gsl_matrix_view UtXlarge_sub=
-		    gsl_matrix_submatrix(UtXlarge, 0, 0, UtXlarge->size1, l);
+		  // pick theSNP row
+		  gsl_matrix_view Xlarge_sub = gsl_matrix_submatrix(Xlarge, 0, 0, inds, l);
+		  gsl_matrix_view UtXlarge_sub = gsl_matrix_submatrix(UtXlarge, 0, 0, inds, l);
 
 		  time_start=clock();
 		  eigenlib_dgemm ("T", "N", 1.0, U, &Xlarge_sub.matrix,
 				  0.0, &UtXlarge_sub.matrix);
 		  time_UtX+=(clock()-time_start)/(double(CLOCKS_PER_SEC)*60.0);
 
-		  gsl_matrix_set_zero (Xlarge);
+		  gsl_matrix_set_zero(Xlarge);
 
 		  for (size_t i=0; i<l; i++) {
 		    // for every batch...
-		    gsl_vector_view UtXlarge_col=
-		      gsl_matrix_column (UtXlarge, i);
-		    gsl_vector_memcpy (Utx, &UtXlarge_col.vector);
+		    gsl_vector_view UtXlarge_col = gsl_matrix_column (UtXlarge, i);
+		    gsl_vector_memcpy(Utx, &UtXlarge_col.vector);
 
 		    CalcUab(UtW, Uty, Utx, Uab);
 
@@ -1381,7 +1381,6 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		    FUNC_PARAM param1=
 		      {false, ni_test, n_cvt, eval, Uab, ab, 0};
 
-		    // for univariate a_mode is 1
 		    double lambda_mle=0, lambda_remle=0, beta=0, se=0, p_wald=0;
 		    double p_lrt=0, p_score=0;
 		    double logl_H1=0.0;
@@ -1392,6 +1391,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		    }
 
 		    if (a_mode==1 || a_mode==4) {
+		      // for univariate a_mode is 1
 		      CalcLambda ('R', param1, l_min, l_max, n_region,
 				  lambda_remle, logl_H1);
 		      CalcRLWald (lambda_remle, param1, beta, se, p_wald);
@@ -1460,7 +1460,7 @@ void LMM::AnalyzePlink (const gsl_matrix *U, const gsl_vector *eval,
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
 	// Create a large matrix.
-	size_t msize=MAX_MARKERS;
+	size_t msize=LMM_MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix_set_zero(Xlarge);
@@ -1637,7 +1637,7 @@ void LMM::Analyzebgen (const gsl_matrix *U, const gsl_vector *eval,
 	gsl_vector *ab=gsl_vector_alloc (n_index);
 
 	// Create a large matrix.
-	size_t msize=MAX_MARKERS;
+	size_t msize=LMM_MAX_MARKERS;
 	gsl_matrix *Xlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix *UtXlarge=gsl_matrix_alloc (U->size1, msize);
 	gsl_matrix_set_zero(Xlarge);

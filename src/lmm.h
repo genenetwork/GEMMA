@@ -26,6 +26,8 @@
 
 using namespace std;
 
+#define LMM_MAX_MARKERS 10000 // used for batch processing
+
 class FUNC_PARAM {
 
 public:

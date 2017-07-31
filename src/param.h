@@ -26,7 +26,7 @@
 #include "gsl/gsl_matrix.h"
 #include "debug.h"
 
-#define MAX_MARKERS 10000 // used for batched processing
+#define K_MAX_MARKERS 10000 // used for K
 
 using namespace std;
 
