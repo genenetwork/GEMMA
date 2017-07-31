@@ -11,9 +11,8 @@ testCenteredRelatednessMatrixKLOCO1() {
     outfn=output/$outn.cXX.txt
     assertEquals 0 $?
     assertEquals "400" `wc -l < $outfn`
-    assertEquals "160000" `wc -w < $outfn`
     assertEquals "0.312" `head -c 5 $outfn`
-    assertEquals "-72508" `perl -nle '$sum += substr($_,0,6)*10000 } END { print $sum' $outfn`
+    assertEquals "71.03" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 testUnivariateLinearMixedModelLOCO1() {
@@ -30,8 +29,8 @@ testUnivariateLinearMixedModelLOCO1() {
     grep "total computation time" < output/$outn.log.txt
     assertEquals 0 $?
     outfn=output/$outn.assoc.txt
-    assertEquals "748" `wc -w < $outfn`
-    assertEquals "67" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+    assertEquals "68" `wc -l < $outfn`
+    assertEquals "15465553.30" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 shunit2=`which shunit2`

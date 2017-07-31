@@ -11,9 +11,7 @@ testCenteredRelatednessMatrixKFullLOCO1() {
     outfn=output/$outn.cXX.txt
     assertEquals 0 $?
     assertEquals "1940" `wc -l < $outfn`
-    assertEquals "3763600" `wc -w < $outfn`
-    assertEquals "0.324" `head -c 5 $outfn`
-    assertEquals "48521" `perl -nle '$sum += substr($_,0,6)*10000 } END { print $sum' $outfn`
+    assertEquals "2246.57" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 testUnivariateLinearMixedModelFullLOCO1() {
@@ -29,8 +27,8 @@ testUnivariateLinearMixedModelFullLOCO1() {
     grep "total computation time" < output/$outn.log.txt
     assertEquals 0 $?
     outfn=output/$outn.assoc.txt
-    assertEquals "10461" `wc -l < $outfn`
-    assertEquals "950" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+    assertEquals "951" `wc -l < $outfn`
+    assertEquals "267509369.79" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 testCenteredRelatednessMatrixK() {
@@ -43,7 +41,7 @@ testCenteredRelatednessMatrixK() {
     assertEquals "1940" `wc -l < $outfn`
     assertEquals "3763600" `wc -w < $outfn`
     assertEquals "0.335" `head -c 5 $outfn`
-    assertEquals "24.9799" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+    assertEquals "1119.64" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 testUnivariateLinearMixedModel() {
@@ -55,7 +53,7 @@ testUnivariateLinearMixedModel() {
     assertEquals 0 $?
     outfn=output/mouse_hs1940_CD8_lmm.assoc.txt
     assertEquals "118459" `wc -w < $outfn`
-    assertEquals "92047" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+    assertEquals "4038557453.62" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 testMultivariateLinearMixedModel() {
@@ -68,7 +66,7 @@ testMultivariateLinearMixedModel() {
 
     outfn=output/mouse_hs1940_CD8MCH_lmm.assoc.txt
     assertEquals "139867" `wc -w < $outfn`
-    assertEquals "92079" `perl -nle '$sum += substr($_,0,6) } END { print $sum' $outfn`
+    assertEquals "4029037056.54" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 shunit2=`which shunit2`
 
