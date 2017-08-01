@@ -1371,6 +1371,11 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		gsl_vector_memcpy (&Xlarge_col.vector, x);
 		c++; // count SNPs going in
 
+		auto func = [] () {
+		  cout << "Hello world" << msize << endl;
+		};
+		func(); // now call the function
+
 		// c is SNP (or column), msize = LMM_MAX_MARKERS
 		// c%msize==0 is when we hit the start of a new SNP
 		// batch:
