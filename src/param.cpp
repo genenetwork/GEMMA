@@ -931,6 +931,10 @@ void PARAM::CheckParam (void) {
 	enforce_fexists(file_anno,"open file");
 
 	if (!loco.empty()) {
+          enforce_msg((a_mode >= 1 && a_mode <= 4) || a_mode == 21 || a_mode == 22,"LOCO only works with LMM and K");
+          enforce_msg(file_bfile.empty(),"LOCO does not work with PLink (yet)");
+          enforce_msg(file_oxford.empty(),"LOCO does not work with Oxford (yet)");
+          enforce_msg(file_gxe.empty(),"LOCO does not support GXE (yet)");
 	  enforce_msg(!file_anno.empty(),"LOCO requires annotation file (-a switch)");
 	  enforce_msg(file_ksnps.empty(),"LOCO does not allow -ksnps switch");
 	  enforce_msg(file_gwasnps.empty(),"LOCO does not allow -gwasnps switch");
