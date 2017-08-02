@@ -1293,36 +1293,13 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	CalcUab (UtW, Uty, Uab);
 
 	//start reading genotypes and analyze
-	size_t c=0, t_last=0;
+	size_t c=0;
 
-	// Count number of SNPS to process
-	if (process_gwasnps) {
-	  // for these we have to reparse the genotype file, sadly
-	  igzstream gfile(file_geno.c_str(), igzstream::in);
-	  for (size_t t=0; t<indicator_snp.size(); ++t) {
-	    string line;
-	    safeGetline(gfile, line);
-	    char *ch_ptr1=strtok ((char *)line.c_str(), " , \t");
-	    auto snp = string(ch_ptr1);
-	    // check whether SNP is included in gwasnps (used by LOCO)
-	    if (process_gwasnps && gwasnps.count(snp)==0) continue;
-	    if (indicator_snp[t]==0) continue;
-	    t_last++;
-	  }
-	  gfile.close();
-	}
-	else {
-	  for (size_t t=0; t<indicator_snp.size(); ++t) {
-	    if (indicator_snp[t]==0) continue;
-	    t_last++;
-	  }
-	}
-	cout << "setGWASnps=" << gwasnps.size() << " SNPs=" << indicator_snp.size() << " t_last=" << t_last << endl;
 	igzstream infile(file_geno.c_str(), igzstream::in);
 	enforce_msg(infile,"error reading genotype file");
 
         auto batch_compute = [&] (size_t l) { // using a C++ closure
-          // pick theSNP row
+          // Compute SNPs in batch, note the computations are independent per SNP
           gsl_matrix_view Xlarge_sub = gsl_matrix_submatrix(Xlarge, 0, 0, inds, l);
           gsl_matrix_view UtXlarge_sub = gsl_matrix_submatrix(UtXlarge, 0, 0, inds, l);
 
@@ -1424,16 +1401,6 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		gsl_vector_memcpy (&Xlarge_col.vector, x);
 		c++; // count SNPs going in
 
-		// c is SNP (or column), msize = LMM_MAX_MARKERS
-		// c%msize==0 is when we hit the start of a new SNP
-		// batch:
-                /*
-		if (c%msize==0 || c==t_last) {
-		  const size_t l = (c%msize==0 ? msize // all snps
-				    : c%msize); // remaining snps in buffer
-		  batch_compute(l); // now call the function
-                  }
-                */
                 if (c == msize)
                   batch_compute(msize);
 	}
