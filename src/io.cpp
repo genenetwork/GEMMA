@@ -30,6 +30,7 @@
 #include <cstdint>
 #include <stdio.h>
 #include <stdlib.h>
+#include <regex>
 #include <assert.h>
 
 #include "gsl/gsl_vector.h"
@@ -1293,29 +1294,32 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 		}
 		if (indicator_snp[t]==0) continue;
 
-		auto ch_ptr=strtok ((char *)line.c_str(), " , \t");
-                enforce_str(ch_ptr,line);
-		auto snp = string(ch_ptr);
+                std::regex_token_iterator<std::string::iterator> rend;
+                regex split_on("[,[:blank:]]+");
+                regex_token_iterator<string::iterator> tokens( line.begin(), line.end(), split_on, -1 );
+
+                auto snp = *tokens;
 		// check whether SNP is included in ksnps (used by LOCO)
 		if (process_ksnps && ksnps.count(snp)==0) continue;
-		strtok (NULL, " , \t");
-		strtok (NULL, " , \t");
+
+                tokens++; // skip nucleotide fields
+                tokens++; // skip nucleotide fields
 
 		// calc SNP stats
 		geno_mean=0.0; n_miss=0; geno_var=0.0;
 		gsl_vector_set_all(geno_miss, 0);
 		for (size_t i=0; i<ni_total; ++i) {
-			ch_ptr=strtok (NULL, " , \t");
-                        enforce_str(ch_ptr,line+" has wrong number of fields");
-                        string field = ch_ptr;
+                        tokens++;
+                        enforce_str(tokens != rend,line+" number of fields");
+                        string field = *tokens;
 			if (field == "NA") {
 			  gsl_vector_set(geno_miss, i, 0);
                           n_miss++;
 			} else {
-                          d=atof(ch_ptr);
+                          d=stod(field);
                           // make sure field contains a number
                           if (field != "0" && field != "0.0")
-                            enforce_str(d != 0.0f,string(ch_ptr));
+                            enforce_str(d != 0.0f, field);
                           gsl_vector_set (geno, i, d);
                           gsl_vector_set (geno_miss, i, 1);
                           geno_mean+=d;
