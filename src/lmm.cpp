@@ -1405,7 +1405,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
                   batch_compute(msize);
 	}
         batch_compute(c % msize);
-	cout << "Counted SNPs " << c << " sumStat " << sumStat.size() << endl;
+	// cout << "Counted SNPs " << c << " sumStat " << sumStat.size() << endl;
 	cout<<endl;
 
 	gsl_vector_free (x);
