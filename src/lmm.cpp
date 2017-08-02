@@ -1321,7 +1321,7 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 	igzstream infile(file_geno.c_str(), igzstream::in);
 	enforce_msg(infile,"error reading genotype file");
 
-        auto batch_compute = [&] (size_t l) {
+        auto batch_compute = [&] (size_t l) { // using a C++ closure
           // pick theSNP row
           gsl_matrix_view Xlarge_sub = gsl_matrix_submatrix(Xlarge, 0, 0, inds, l);
           gsl_matrix_view UtXlarge_sub = gsl_matrix_submatrix(UtXlarge, 0, 0, inds, l);
@@ -1427,12 +1427,17 @@ void LMM::AnalyzeBimbam (const gsl_matrix *U, const gsl_vector *eval,
 		// c is SNP (or column), msize = LMM_MAX_MARKERS
 		// c%msize==0 is when we hit the start of a new SNP
 		// batch:
+                /*
 		if (c%msize==0 || c==t_last) {
 		  const size_t l = (c%msize==0 ? msize // all snps
 				    : c%msize); // remaining snps in buffer
 		  batch_compute(l); // now call the function
-	      }
+                  }
+                */
+                if (c == msize)
+                  batch_compute(msize);
 	}
+        batch_compute(c % msize);
 	cout << "Counted SNPs " << c << " sumStat " << sumStat.size() << endl;
 	cout<<endl;
 
