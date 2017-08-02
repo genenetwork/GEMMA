@@ -1266,9 +1266,6 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 	igzstream infile (file_geno.c_str(), igzstream::in);
 	enforce_msg(infile,"error reading genotype file");
 
-	string line;
-	char *ch_ptr;
-
 	size_t n_miss;
 	double d, geno_mean, geno_var;
 
@@ -1289,32 +1286,40 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
 	// For every SNP read the genotype per individual
 	size_t ns_test=0;
 	for (size_t t=0; t<indicator_snp.size(); ++t) {
+                string line;
 		!safeGetline(infile, line).eof();
 		if (t%display_pace==0 || t==(indicator_snp.size()-1)) {
 		  ProgressBar ("Reading SNPs  ", t, indicator_snp.size()-1);
 		}
 		if (indicator_snp[t]==0) continue;
 
-		ch_ptr=strtok ((char *)line.c_str(), " , \t");
+		auto ch_ptr=strtok ((char *)line.c_str(), " , \t");
+                enforce_str(ch_ptr,line);
 		auto snp = string(ch_ptr);
 		// check whether SNP is included in ksnps (used by LOCO)
 		if (process_ksnps && ksnps.count(snp)==0) continue;
-		ch_ptr=strtok (NULL, " , \t");
-		ch_ptr=strtok (NULL, " , \t");
+		strtok (NULL, " , \t");
+		strtok (NULL, " , \t");
 
 		// calc SNP stats
 		geno_mean=0.0; n_miss=0; geno_var=0.0;
 		gsl_vector_set_all(geno_miss, 0);
 		for (size_t i=0; i<ni_total; ++i) {
 			ch_ptr=strtok (NULL, " , \t");
-			if (strcmp(ch_ptr, "NA")==0) {
-			  gsl_vector_set(geno_miss, i, 0); n_miss++;
+                        enforce_str(ch_ptr,line+" has wrong number of fields");
+                        string field = ch_ptr;
+			if (field == "NA") {
+			  gsl_vector_set(geno_miss, i, 0);
+                          n_miss++;
 			} else {
-				d=atof(ch_ptr);
-				gsl_vector_set (geno, i, d);
-				gsl_vector_set (geno_miss, i, 1);
-				geno_mean+=d;
-				geno_var+=d*d;
+                          d=atof(ch_ptr);
+                          // make sure field contains a number
+                          if (field != "0" && field != "0.0")
+                            enforce_str(d != 0.0f,string(ch_ptr));
+                          gsl_vector_set (geno, i, d);
+                          gsl_vector_set (geno_miss, i, 1);
+                          geno_mean+=d;
+                          geno_var+=d*d;
 			}
 		}
 

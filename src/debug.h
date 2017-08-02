@@ -37,6 +37,11 @@ extern "C" void __assert_fail (const char *__assertion, const char *__file,
    ? __ASSERT_VOID_CAST (0)                                             \
    : __assert_fail (msg, __FILE__, __LINE__, __ASSERT_FUNCTION))
 
+# define enforce_str(expr, msg)						\
+  ((expr)                                                               \
+   ? __ASSERT_VOID_CAST (0)                                             \
+   : __assert_fail ((msg).c_str(), __FILE__, __LINE__, __ASSERT_FUNCTION))
+
 // Helpers to create a unique varname per MACRO
 #define COMBINE1(X,Y) X##Y
 #define COMBINE(X,Y) COMBINE1(X,Y)
