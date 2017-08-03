@@ -2880,7 +2880,6 @@ return;}
             cLmm.Analyzebgen(U, eval, UtW, &UtY_col.vector, W, &Y_col.vector);
           } else {
             if (cPar.file_gxe.empty()) {
-              // adding LOCO support
               cLmm.AnalyzeBimbam(U, eval, UtW, &UtY_col.vector, W,
                                  &Y_col.vector, cPar.setGWASnps);
             } else {

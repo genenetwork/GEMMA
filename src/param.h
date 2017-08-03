@@ -26,7 +26,7 @@
 #include <set>
 #include <vector>
 
-#define K_MAX_MARKERS 10000 // used for K
+#define K_BATCH_SIZE 10000 // #snps used for batched K
 
 using namespace std;
 

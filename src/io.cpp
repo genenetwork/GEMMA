@@ -1353,7 +1353,7 @@ bool BimbamKin(const string file_geno, const set<string> ksnps,
   gsl_vector *geno_miss = gsl_vector_alloc(ni_total);
 
   // Xlarge contains inds x markers
-  const size_t msize = K_MAX_MARKERS;
+  const size_t msize = K_BATCH_SIZE;
   gsl_matrix *Xlarge = gsl_matrix_alloc(ni_total, msize);
   enforce_msg(Xlarge, "allocate Xlarge");
 
@@ -1494,7 +1494,7 @@ bool PlinkKin(const string &file_bed, vector<int> &indicator_snp,
   int n_bit;
 
   // Create a large matrix.
-  const size_t msize = K_MAX_MARKERS;
+  const size_t msize = K_BATCH_SIZE;
   gsl_matrix *Xlarge = gsl_matrix_alloc(ni_total, msize);
   gsl_matrix_set_zero(Xlarge);
 
@@ -3400,7 +3400,7 @@ bool BimbamKinUncentered(const string &file_geno, const set<string> ksnps,
   }
 
   // Create a large matrix.
-  const size_t msize = K_MAX_MARKERS;
+  const size_t msize = K_BATCH_SIZE;
   gsl_matrix *Xlarge = gsl_matrix_alloc(ni_test, msize * n_vc);
   gsl_matrix_set_zero(Xlarge);
 
@@ -3593,7 +3593,7 @@ bool PlinkKin(const string &file_bed, const int display_pace,
   }
 
   // Create a large matrix.
-  const size_t msize = K_MAX_MARKERS;
+  const size_t msize = K_BATCH_SIZE;
   gsl_matrix *Xlarge = gsl_matrix_alloc(ni_test, msize * n_vc);
   gsl_matrix_set_zero(Xlarge);
 

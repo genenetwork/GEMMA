@@ -13,7 +13,7 @@
 /* This prints an "Assertion failed" message and aborts.  */
 extern "C" void __assert_fail(const char *__assertion, const char *__file,
                               unsigned int __line,
-                              const char *__function)
+                              const char *__function) __THROW
     __attribute__((__noreturn__));
 
 #define __ASSERT_FUNCTION __PRETTY_FUNCTION__
