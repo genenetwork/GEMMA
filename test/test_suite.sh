@@ -4,8 +4,10 @@ gemma=../bin/gemma
 
 testCenteredRelatednessMatrixKFullLOCO1() {
     outn=mouse_hs1940_full_LOCO1
-    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
-           -a ../example/mouse_hs1940.anno.txt -loco 1 -gk -debug -o $outn
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz \
+           -p ../example/mouse_hs1940.pheno.txt \
+           -a ../example/mouse_hs1940.anno.txt \
+           -loco 1 -gk -debug -o $outn
     assertEquals 0 $?
     grep "total computation time" < output/$outn.log.txt
     outfn=output/$outn.cXX.txt
@@ -16,10 +18,12 @@ testCenteredRelatednessMatrixKFullLOCO1() {
 
 testUnivariateLinearMixedModelFullLOCO1() {
     outn=mouse_hs1940_CD8_full_LOCO1_lmm
-    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz \
+           -p ../example/mouse_hs1940.pheno.txt \
 	   -n 1 \
 	   -loco 1 \
-           -a ../example/mouse_hs1940.anno.txt -k ./output/mouse_hs1940_full_LOCO1.cXX.txt \
+           -a ../example/mouse_hs1940.anno.txt \
+           -k ./output/mouse_hs1940_full_LOCO1.cXX.txt \
 	   -lmm \
 	   -debug \
            -o $outn
@@ -32,7 +36,8 @@ testUnivariateLinearMixedModelFullLOCO1() {
 }
 
 testCenteredRelatednessMatrixK() {
-    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz \
+           -p ../example/mouse_hs1940.pheno.txt \
            -gk -o mouse_hs1940
     assertEquals 0 $?
     grep "total computation time" < output/mouse_hs1940.log.txt
@@ -45,8 +50,12 @@ testCenteredRelatednessMatrixK() {
 }
 
 testUnivariateLinearMixedModel() {
-    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt -n 1 \
-           -a ../example/mouse_hs1940.anno.txt -k ./output/mouse_hs1940.cXX.txt -lmm \
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz \
+           -p ../example/mouse_hs1940.pheno.txt \
+           -n 1 \
+           -a ../example/mouse_hs1940.anno.txt \
+           -k ./output/mouse_hs1940.cXX.txt \
+           -lmm \
            -o mouse_hs1940_CD8_lmm
     assertEquals 0 $?
     grep "total computation time" < output/mouse_hs1940_CD8_lmm.log.txt
@@ -57,8 +66,11 @@ testUnivariateLinearMixedModel() {
 }
 
 testMultivariateLinearMixedModel() {
-    $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \
-           -n 1 6 -a ../example/mouse_hs1940.anno.txt -k ./output/mouse_hs1940.cXX.txt \
+    $gemma -g ../example/mouse_hs1940.geno.txt.gz \
+           -p ../example/mouse_hs1940.pheno.txt \
+           -n 1 6 \
+           -a ../example/mouse_hs1940.anno.txt \
+           -k ./output/mouse_hs1940.cXX.txt \
            -lmm -o mouse_hs1940_CD8MCH_lmm
     assertEquals 0 $?
     grep "total computation time" < output/mouse_hs1940_CD8MCH_lmm.log.txt
