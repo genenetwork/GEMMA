@@ -1357,7 +1357,7 @@ void PARAM::CalcKin (gsl_matrix *matrix_kin)  {
 	else {
 		file_str=file_geno;
 		if (BimbamKin (file_str, setKSnps, indicator_snp, a_mode-20, d_pace,
-			       matrix_kin, mode_debug)==false) {
+			       matrix_kin, ni_max == 0)==false) {
 		  error=true;
 		}
 	}

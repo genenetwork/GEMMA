@@ -1263,7 +1263,7 @@ void ReadFile_eigenD (const string &file_kd, bool &error, gsl_vector *eval) {
 // Read bimbam mean genotype file and calculate kinship matrix.
 bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &indicator_snp,
 		const int k_mode, const int display_pace,
-		gsl_matrix *matrix_kin, const bool debug) {
+		gsl_matrix *matrix_kin, const bool test_nind) {
 	igzstream infile (file_geno.c_str(), igzstream::in);
 	enforce_msg(infile,"error reading genotype file");
 
@@ -1297,7 +1297,7 @@ bool BimbamKin (const string file_geno, const set<string> ksnps, vector<int> &in
                 std::regex_token_iterator<std::string::iterator> rend;
                 regex split_on("[,[:blank:]]+");
                 regex_token_iterator<string::iterator> tokens( line.begin(), line.end(), split_on, -1 );
-                if (!debug) {
+                if (test_nind) {
                   // ascertain the number of genotype fields match
                   uint token_num = 0;
                   for (auto x = tokens; x != rend; x++) token_num++;

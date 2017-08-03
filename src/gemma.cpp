@@ -1006,7 +1006,6 @@ void GEMMA::Assign(int argc, char ** argv, PARAM &cPar) {
 			str.clear();
 			str.assign(argv[i]);
 			cPar.ni_max=atoi(str.c_str()); // for testing purposes
-                        cPar.mode_debug = true; // force debug mode
 		}
 		else if (strcmp(argv[i], "-emp")==0) {
 			if(argv[i+1] == NULL || argv[i+1][0] == '-') {continue;}
