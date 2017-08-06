@@ -2,6 +2,22 @@
 
 gemma=../bin/gemma
 
+# https://github.com/genetics-statistics/GEMMA/issues/26
+# Always getting 'pve estimate =0.99xxx se(pve) =-nan'
+testIssue26() {
+    outn=issue26
+    $gemma -bfile data/issue26/mydata -k data/issue26/mydata_kinship.sXX.txt \
+           -miss 1 -maf 0.01 -r2 1 -lmm \
+           -o $outn
+    assertEquals 0 $?
+    grep "total computation time" < output/$outn.log.txt
+    outfn=output/$outn.cXX.txt
+    assertEquals 0 $?
+    assertEquals "400" `wc -l < $outfn`
+    assertEquals "71.03" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
+    exit 1
+}
+
 testCenteredRelatednessMatrixKLOCO1() {
     outn=mouse_hs1940_LOCO1
     $gemma -g ../example/mouse_hs1940.geno.txt.gz -p ../example/mouse_hs1940.pheno.txt \

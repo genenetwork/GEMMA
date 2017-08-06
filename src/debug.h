@@ -1,6 +1,8 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+#include <assert.h>
+
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
 
@@ -9,12 +11,6 @@
 #else
 #define debug_msg(msg) cout << "**** DEBUG: " << msg << endl;
 #endif
-
-/* This prints an "Assertion failed" message and aborts.  */
-extern "C" void __assert_fail(const char *__assertion, const char *__file,
-                              unsigned int __line,
-                              const char *__function) __THROW
-    __attribute__((__noreturn__));
 
 #define __ASSERT_FUNCTION __PRETTY_FUNCTION__
 
