@@ -11,10 +11,10 @@ testIssue26() {
            -o $outn
     assertEquals 0 $?
     grep "total computation time" < output/$outn.log.txt
-    outfn=output/$outn.cXX.txt
+    outfn=output/$outn.assoc.txt
     assertEquals 0 $?
-    assertEquals "400" `wc -l < $outfn`
-    assertEquals "71.03" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
+    assertEquals "2001" `wc -l < $outfn`
+    assertEquals "1582899231.18" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
     exit 1
 }
 
