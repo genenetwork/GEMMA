@@ -2803,12 +2803,14 @@ return;}
           cPar.beta_mle_null.push_back(gsl_matrix_get(B, 0, i));
           cPar.se_beta_mle_null.push_back(gsl_matrix_get(se_B, 0, i));
         }
+        assert(!isnan(se_B->data[0]));
 
         CalcLambda('R', eval, UtW, &UtY_col.vector, cPar.l_min, cPar.l_max,
                    cPar.n_region, cPar.l_remle_null, cPar.logl_remle_H0);
         CalcLmmVgVeBeta(eval, UtW, &UtY_col.vector, cPar.l_remle_null,
                         cPar.vg_remle_null, cPar.ve_remle_null, &beta.vector,
                         &se_beta.vector);
+
         cPar.beta_remle_null.clear();
         cPar.se_beta_remle_null.clear();
         for (size_t i = 0; i < B->size2; i++) {

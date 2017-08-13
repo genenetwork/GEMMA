@@ -2,6 +2,7 @@
 
 gemma=../bin/gemma
 
+# The following test passes with libgsl v1, but fails with libgsl v2, see also
 # https://github.com/genetics-statistics/GEMMA/issues/26
 # Always getting 'pve estimate =0.99xxx se(pve) =-nan'
 testIssue26() {
@@ -15,7 +16,6 @@ testIssue26() {
     assertEquals 0 $?
     assertEquals "2001" `wc -l < $outfn`
     assertEquals "1582899231.18" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
-    exit 1
 }
 
 testCenteredRelatednessMatrixKLOCO1() {
