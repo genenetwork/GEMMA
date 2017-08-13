@@ -49,4 +49,5 @@ inline void __enforce_fail(const char *__assertion, const char *__file,
        : __enforce_fail(gsl_strerror(COMBINE(res, __LINE__)), __FILE__,         \
                         __LINE__, __ASSERT_FUNCTION))
 
+
 #endif

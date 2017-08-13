@@ -2653,7 +2653,8 @@ return;}
     gsl_matrix *W = gsl_matrix_alloc(Y->size1, cPar.n_cvt);
     gsl_matrix *B = gsl_matrix_alloc(Y->size2, W->size2); // B is a d by c
                                                           // matrix
-    gsl_matrix *se_B = gsl_matrix_alloc(Y->size2, W->size2);
+    gsl_matrix *se_B = gsl_matrix_calloc(Y->size2, W->size2);
+    assert(!isnan(se_B->data[0]));
     gsl_matrix *G = gsl_matrix_alloc(Y->size1, Y->size1);
     gsl_matrix *U = gsl_matrix_alloc(Y->size1, Y->size1);
     gsl_matrix *UtW = gsl_matrix_alloc(Y->size1, W->size2);
