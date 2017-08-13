@@ -45,7 +45,7 @@ endif
 ifdef FORCE_DYNAMIC
   LIBS = -lgsl -lgslcblas -pthread -lz
 else
-  LIBS = ~/opt/gsl1/lib/libgsl.a ~/opt/gsl1/lib/libgslcblas.a -pthread -lz
+  LIBS = -Xlinker -t -lgsl -lgslcblas -pthread -lz
 endif
 
 OUTPUT = $(BIN_DIR)/gemma
