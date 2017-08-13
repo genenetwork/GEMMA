@@ -16,7 +16,7 @@ WITH_OPENBLAS   =
 NO_INTEL_COMPAT =
 FORCE_32BIT     =
 FORCE_DYNAMIC   =
-DIST_NAME       = gemma-0.97
+DIST_NAME       = gemma-0.97.1
 
 # --------------------------------------------------------------------
 # Edit below this line with caution
@@ -28,7 +28,12 @@ BIN_DIR  = ./bin
 
 SRC_DIR  = ./src
 
-CPP = g++
+ifdef CXX
+  CPP = $(CXX)
+  CC = $(CXX)
+else
+  CPP = g++
+endif
 
 ifdef DEBUG
   # development mode
@@ -97,7 +102,6 @@ else
   CPPFLAGS += -static
 endif
 
-
 # all
 OBJS = $(SOURCES:.cpp=.o)
 
@@ -124,7 +128,7 @@ check: fast-check slow-check
 
 clean:
 	rm -rf ${SRC_DIR}/*.o ${SRC_DIR}/*~ *~ $(OUTPUT)
-	rm test/output/*
+	rm -f test/output/*
 
 DIST_COMMON = COPYING.txt README.txt Makefile
 DIST_SUBDIRS = src doc example bin

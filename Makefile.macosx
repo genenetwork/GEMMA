@@ -16,7 +16,7 @@ SYS = MAC
 WITH_LAPACK = 1
 FORCE_32BIT =
 FORCE_DYNAMIC = 1
-DIST_NAME = gemma-0.97
+DIST_NAME = gemma-0.97.1
 
 # --------------------------------------------------------------------
 # Edit below this line with caution
@@ -27,8 +27,9 @@ SRC_DIR  = ./src
 
 CPP = g++
 
-CPPFLAGS = -F /System/Library/Frameworks -Wall -Weffc++ \
-  -O3 -I/usr/local/opt/gsl@1/include -Wc++11-narrowing
+CPPFLAGS = -F /System/Library/Frameworks \
+  -O3 -I/usr/local/opt/gsl@1/include \
+  -I./eigen -Wc++11-narrowing -Wno-unused-value
 
 LIBS = /usr/local/opt/gsl@1/lib/libgsl.a \
        /usr/local/opt/gsl@1/lib/libgslcblas.a -lz
