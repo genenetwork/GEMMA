@@ -37,7 +37,7 @@ endif
 
 ifdef DEBUG
   # development mode
-  CPPFLAGS = -g -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+  CPPFLAGS = -g -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
 else
   # release
   CPPFLAGS = -DNDEBUG -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
@@ -50,7 +50,7 @@ endif
 ifdef FORCE_DYNAMIC
   LIBS = -lgsl -lgslcblas -pthread -lz
 else
-  LIBS = -Xlinker -t -lgsl -lgslcblas -pthread -lz
+  LIBS = -llapack -lblas -L$(HOME)/.guix-profile/lib -Xlinker -t $(HOME)/opt/gsl1/lib/libgsl.a $(HOME)/opt/gsl1/lib/libgslcblas.a -pthread -lz
 endif
 
 OUTPUT = $(BIN_DIR)/gemma
@@ -99,7 +99,7 @@ endif
 
 ifdef FORCE_DYNAMIC
 else
-  CPPFLAGS += -static
+  # CPPFLAGS += -static
 endif
 
 # all
