@@ -39,6 +39,6 @@ script:
   # build and test release version
   - make CXX=$CXX FORCE_DYNAMIC=1 WITH_OPENBLAS=1 -j 4
   - time make check
-  # build static release (no test)
+  # build static release (fast-check only)
   - make clean
   - make CXX=$CXX WITH_OPENBLAS=1 -j 4 fast-check
