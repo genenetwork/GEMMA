@@ -41,4 +41,5 @@ script:
   - time make check
   # build static release (fast-check only)
   - make clean
+  - ls -l /usr/lib/lapack/* /usr/lib/libblas/* /usr/lib/atlas-base/*
   - make CXX=$CXX WITH_OPENBLAS=1 -j 4 fast-check

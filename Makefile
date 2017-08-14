@@ -82,6 +82,8 @@ else
       LIBS += $(LIBS_LNX_D_BLAS)
     endif
     LIBS += $(LIBS_LNX_D_LAPACK)
+  else
+    LIBS += $(LIBS_LNX_S_LAPACK)
   endif
 endif
   SOURCES += $(SRC_DIR)/lapack.cpp
