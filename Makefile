@@ -50,7 +50,7 @@ endif
 ifdef FORCE_DYNAMIC
   LIBS = -lgsl -lgslcblas -pthread -lz
 else
-  CPPFLAGS += -static
+  # CPPFLAGS += -static
 endif
 
 OUTPUT = $(BIN_DIR)/gemma
