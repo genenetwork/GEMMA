@@ -2,6 +2,33 @@
 
 gemma=../bin/gemma
 
+# Test for https://github.com/genetics-statistics/GEMMA/issues/45
+testIssue45() {
+    return
+    outn=issue45
+    $gemma -bfile data/issue45/WisAsp_BCFfiltered_VCFfiltered_vcf-merge_VCFfiltered-take2_maf05_plink_LinkImpute_LDprune_removedrelatedsamples \
+           -gk 1 -debug -issue 45 -o $outn
+    assertEquals 0 $?
+    outfn=output/$outn.cXX.txt
+    assertEquals "439" `wc -l < $outfn`
+    assertEquals "-1209.36" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
+}
+
+testIssue45LMM() {
+    testname=issue45LMM
+    datadir=../example
+    $gemma -bfile -bfile data/issue45/WisAsp_BCFfiltered_VCFfiltered_vcf-merge_VCFfiltered-take2_maf05_plink_LinkImpute_LDprune_removedrelatedsamples \
+           -k output/issue45.cXX.txt \
+           -lmm 1 \
+           -maf 0.1 \
+           -o $testname
+    assertEquals 0 $?
+    outfn=output/$testname.assoc.txt
+    assertEquals "223243" `wc -l < $outfn`
+    assertEquals "89756559859.06" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
+    exit 1
+}
+
 # Test for https://github.com/genetics-statistics/GEMMA/issues/26
 # Always getting 'pve estimate =0.99xxx se(pve) =-nan'
 testIssue26() {
