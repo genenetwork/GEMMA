@@ -12,6 +12,9 @@
 #define debug_msg(msg)
 #else
 #define debug_msg(msg) cout << "**** DEBUG: " << msg << endl;
+#define assert_issue(is_issue, expr)                                               \
+  ((is_issue) ? enforce_msg(expr,"FAIL: ISSUE assert") : __ASSERT_VOID_CAST(0))
+
 #endif
 
 /* This prints an "Assertion failed" message and aborts.  */

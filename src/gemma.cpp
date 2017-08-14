@@ -697,6 +697,7 @@ void GEMMA::PrintHelp(size_t option) {
     cout << " -silence                 silent terminal display" << endl;
     cout << " -debug                   debug output" << endl;
     cout << " -nind       [num]        read up to num individuals" << endl;
+    cout << " -issue      [num]        enable tests relevant to issue tracker" << endl;
     cout << endl;
   }
 
@@ -1347,6 +1348,16 @@ void GEMMA::Assign(int argc, char **argv, PARAM &cPar) {
       str.clear();
       str.assign(argv[i]);
       cPar.ni_max = atoi(str.c_str()); // for testing purposes
+      enforce(cPar.ni_max > 0);
+    } else if (strcmp(argv[i], "-issue") == 0) {
+      if (argv[i + 1] == NULL || argv[i + 1][0] == '-') {
+        continue;
+      }
+      ++i;
+      str.clear();
+      str.assign(argv[i]);
+      cPar.issue = atoi(str.c_str()); // for testing purposes
+      enforce(cPar.issue > 0);
     } else if (strcmp(argv[i], "-emp") == 0) {
       if (argv[i + 1] == NULL || argv[i + 1][0] == '-') {
         continue;
@@ -2648,22 +2659,20 @@ return;}
   if (cPar.a_mode == 1 || cPar.a_mode == 2 || cPar.a_mode == 3 ||
       cPar.a_mode == 4 || cPar.a_mode == 5 ||
       cPar.a_mode == 31) { // Fit LMM or mvLMM or eigen
-    gsl_matrix *Y = gsl_matrix_calloc(cPar.ni_test, cPar.n_ph);
+    gsl_matrix *Y = gsl_matrix_alloc(cPar.ni_test, cPar.n_ph);
     enforce_msg(Y, "allocate Y"); // just to be sure
-    gsl_matrix *W = gsl_matrix_calloc(Y->size1, cPar.n_cvt);
-    gsl_matrix *B = gsl_matrix_calloc(Y->size2, W->size2); // B is a d by c
+    gsl_matrix *W = gsl_matrix_alloc(Y->size1, cPar.n_cvt);
+    gsl_matrix *B = gsl_matrix_alloc(Y->size2, W->size2); // B is a d by c
                                                           // matrix
-    assert(!isnan(B->data[0]));
-    gsl_matrix *se_B = gsl_matrix_calloc(Y->size2, W->size2);
-    assert(!isnan(se_B->data[0]));
-    gsl_matrix *G = gsl_matrix_calloc(Y->size1, Y->size1);
-    gsl_matrix *U = gsl_matrix_calloc(Y->size1, Y->size1);
+    gsl_matrix *se_B = gsl_matrix_alloc(Y->size2, W->size2);
+    gsl_matrix *G = gsl_matrix_alloc(Y->size1, Y->size1);
+    gsl_matrix *U = gsl_matrix_alloc(Y->size1, Y->size1);
     gsl_matrix *UtW = gsl_matrix_calloc(Y->size1, W->size2);
     gsl_matrix *UtY = gsl_matrix_calloc(Y->size1, Y->size2);
     gsl_vector *eval = gsl_vector_calloc(Y->size1);
-    gsl_vector *env = gsl_vector_calloc(Y->size1);
-    gsl_vector *weight = gsl_vector_calloc(Y->size1);
-    assert(UtY->data[0] == 0.0);
+    gsl_vector *env = gsl_vector_alloc(Y->size1);
+    gsl_vector *weight = gsl_vector_alloc(Y->size1);
+    assert_issue(cPar.issue == 26, UtY->data[0] == 0.0);
 
     // set covariates matrix W and phenotype matrix Y
     // an intercept should be included in W,
@@ -2772,7 +2781,7 @@ return;}
       CalcUtX(U, W, UtW);
       CalcUtX(U, Y, UtY);
 
-      assert(UtY->data[0] == -16.614250910990037);
+      assert_issue(cPar.issue == 26, ROUND(UtY->data[0]) == -16.6143);
 
       LMM cLmm;
       cLmm.CopyFromParam(cPar);
@@ -2789,40 +2798,26 @@ return;}
       // calculate UtW and Uty
       CalcUtX(U, W, UtW);
       CalcUtX(U, Y, UtY);
-      cout << "HEY! UtY" << ROUND(UtY->data[0]) << endl;
-      assert(ROUND(UtY->data[0]) == -16.6143);
+      assert_issue(cPar.issue == 26, ROUND(UtY->data[0]) == -16.6143);
 
       // calculate REMLE/MLE estimate and pve for univariate model
       if (cPar.n_ph == 1) { // one phenotype
         gsl_vector_view beta = gsl_matrix_row(B, 0);
         gsl_vector_view se_beta = gsl_matrix_row(se_B, 0);
         gsl_vector_view UtY_col = gsl_matrix_column(UtY, 0);
-        assert(!isnan(B->data[0]));
-        assert(!isnan(se_beta.vector.data[0]));
-        assert(!isnan(se_B->data[0]));
-        assert(!isnan(UtY->data[0]));
 
-        assert(ROUND(UtY->data[0]) == -16.6143);
-        cout << "HEY! beta" << round(SumVector(&beta.vector) * 100.)/100  << endl;
-        cout << "HEY! se_beta" << round(SumVector(&se_beta.vector) * 100.)/100  << endl;
-        // cout << "HEY! se_B" << round(SumVector(&se_B.vector) * 100.)/100  << endl;
-        // cout << "HEY! UtY" << round(SumVector(&UtY.vector) * 100.)/100  << endl;
+        assert_issue(cPar.issue == 26, ROUND(UtY->data[0]) == -16.6143);
 
         CalcLambda('L', eval, UtW, &UtY_col.vector, cPar.l_min, cPar.l_max,
                    cPar.n_region, cPar.l_mle_null, cPar.logl_mle_H0);
         assert(!isnan(UtY->data[0]));
-        cout << "HEY! beta" << round(SumVector(&beta.vector) * 100.)/100  << endl;
-        cout << "HEY! se_beta" << round(SumVector(&se_beta.vector) * 100.)/100  << endl;
         assert(!isnan(B->data[0]));
         assert(!isnan(se_B->data[0]));
-        // assert(se_B->data[0] == 0.045809278979318351);
 
         CalcLmmVgVeBeta(eval, UtW, &UtY_col.vector, cPar.l_mle_null,
                         cPar.vg_mle_null, cPar.ve_mle_null, &beta.vector,
                         &se_beta.vector);
 
-        cout << "HEY! beta" << round(SumVector(&beta.vector) * 100.)/100  << endl;
-        cout << "HEY! se_beta" << round(SumVector(&se_beta.vector) * 100.)/100  << endl;
         assert(!isnan(UtY->data[0]));
         assert(!isnan(B->data[0]));
         assert(!isnan(se_B->data[0]));
