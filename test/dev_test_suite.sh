@@ -2,8 +2,7 @@
 
 gemma=../bin/gemma
 
-# The following test passes with libgsl v1, but fails with libgsl v2, see also
-# https://github.com/genetics-statistics/GEMMA/issues/26
+# Test for https://github.com/genetics-statistics/GEMMA/issues/26
 # Always getting 'pve estimate =0.99xxx se(pve) =-nan'
 testIssue26() {
     outn=issue26
