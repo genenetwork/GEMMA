@@ -14,7 +14,7 @@ GEMMA runs on Linux and MAC OSX and the runtime has the following
 dependencies:
 
 * C++ tool chain >= 4.9
-* GNU Science library (GSL) 1.x (does not currently work with GSL >= 2).
+* GNU Science library (GSL) 1.x (GEMMA does not currently work with GSL >= 2).
 * blas/openblas
 * lapack
 * [Eigen3 library](http://eigen.tuxfamily.org/dox/)

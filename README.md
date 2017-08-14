@@ -149,7 +149,7 @@ from the Github repository.
 
 ### Precompiled binaries
 
-1. Fetch the [latest stable release](latest_release) and download the
+1. Fetch the [latest stable release][latest_release] and download the
 file appropriate for your platform: `gemma.linux.gz` for Linux, or
 `gemma.macosx.gz` for Mac OS X.
 
@@ -181,4 +181,4 @@ University of Michigan<br>
 Peter Carbonetto, Tim Flutre, Matthew Stephens, Pjotr Prins and others
 have also contributed to the development of this software.
 
-[latest_release]: https://github.com/genetics-statistics/GEMMA/releases/tag/v0.96 "Most recent stable release"
+[latest_release]: https://github.com/genetics-statistics/GEMMA/releases "Most recent stable releases"
