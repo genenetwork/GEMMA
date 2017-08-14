@@ -26,6 +26,8 @@ before_install:
   - sudo apt-get install -y libeigen3-dev
   - sudo apt-get install -y libgsl0-dev
   - sudo apt-get install -y liblapack-dev
+  # for the static release version we need the following
+  # - sudo apt-get install -y gfortran-dev
   - dpkg -l
   - eval "${MATRIX_EVAL}"
   - $CXX --version
@@ -34,12 +36,12 @@ script:
   - $CXX --version
   # build static release (fast-check only)
   - make clean
-  - ls -l /usr/lib/lapack/* /usr/lib/libblas/* /usr/lib/*gsl* /usr/lib/*.a
+  - ls -l /usr/lib/lapack/* /usr/lib/libblas/* /usr/lib/*gsl* /usr/lib/*.a /usr/lib/gcc/x86_64-linux-gnu/*
   - make CXX=$CXX -j 4 fast-check
   # build and test debug version
-  - make CXX=$CXX FORCE_DYNAMIC=1 WITH_OPENBLAS=1 DEBUG=1 -j 4
-  - time make check
-  - make clean
+  # - make CXX=$CXX FORCE_DYNAMIC=1 WITH_OPENBLAS=1 DEBUG=1 -j 4
+  # - time make check
+  # - make clean
   # build and test release version
-  - make CXX=$CXX FORCE_DYNAMIC=1 WITH_OPENBLAS=1 -j 4
-  - time make check
+  # - make CXX=$CXX FORCE_DYNAMIC=1 WITH_OPENBLAS=1 -j 4
+  # - time make check
