@@ -34,7 +34,7 @@ script:
   - $CXX --version
   # build static release (fast-check only)
   - make clean
-  - ls -l /usr/lib/lapack/* /usr/lib/libblas/* /usr/lib/*gsl*
+  - ls -l /usr/lib/lapack/* /usr/lib/libblas/* /usr/lib/*gsl* /usr/lib/*.a
   - make CXX=$CXX -j 4 fast-check
   # build and test debug version
   - make CXX=$CXX FORCE_DYNAMIC=1 WITH_OPENBLAS=1 DEBUG=1 -j 4
