@@ -16,7 +16,7 @@ WITH_OPENBLAS   =
 NO_INTEL_COMPAT =
 FORCE_32BIT     =
 FORCE_DYNAMIC   =
-GCC_FLAGS       = # extra flags, e.g. -O3
+GCC_FLAGS       = -O3 # extra flags
 DIST_NAME       = gemma-0.97.1
 
 # --------------------------------------------------------------------
@@ -40,7 +40,7 @@ ifdef DEBUG
   CPPFLAGS = -g $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
 else
   # release mode
-  CPPFLAGS = -DNDEBUG $(GCC_FLAGS) -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+  CPPFLAGS = -DNDEBUG $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
 endif
 
 ifdef SHOW_COMPILER_WARNINGS

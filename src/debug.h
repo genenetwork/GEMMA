@@ -10,9 +10,10 @@
 #define ROUND(f) round(f * 10000.)/10000
 #if defined NDEBUG
 #define debug_msg(msg)
+#define assert_issue(is_issue, expr)
 #else
 #define debug_msg(msg) cout << "**** DEBUG: " << msg << endl;
-#define assert_issue(is_issue, expr)                                               \
+#define assert_issue(is_issue, expr) \
   ((is_issue) ? enforce_msg(expr,"FAIL: ISSUE assert") : __ASSERT_VOID_CAST(0))
 
 #endif
