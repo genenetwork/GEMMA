@@ -2663,6 +2663,7 @@ return;}
     gsl_vector *eval = gsl_vector_calloc(Y->size1);
     gsl_vector *env = gsl_vector_calloc(Y->size1);
     gsl_vector *weight = gsl_vector_calloc(Y->size1);
+    assert(UtY->data[0] == 0.0);
 
     // set covariates matrix W and phenotype matrix Y
     // an intercept should be included in W,
@@ -2771,6 +2772,8 @@ return;}
       CalcUtX(U, W, UtW);
       CalcUtX(U, Y, UtY);
 
+      assert(UtY->data[0] == -16.614250910990037);
+
       LMM cLmm;
       cLmm.CopyFromParam(cPar);
 
@@ -2786,6 +2789,8 @@ return;}
       // calculate UtW and Uty
       CalcUtX(U, W, UtW);
       CalcUtX(U, Y, UtY);
+      cout << "HEY! UtY" << ROUND(UtY->data[0]) << endl;
+      assert(ROUND(UtY->data[0]) == -16.6143);
 
       // calculate REMLE/MLE estimate and pve for univariate model
       if (cPar.n_ph == 1) { // one phenotype
@@ -2797,7 +2802,7 @@ return;}
         assert(!isnan(se_B->data[0]));
         assert(!isnan(UtY->data[0]));
 
-        assert(UtY->data[0] == -16.614250910990037);
+        assert(ROUND(UtY->data[0]) == -16.6143);
         cout << "HEY! beta" << round(SumVector(&beta.vector) * 100.)/100  << endl;
         cout << "HEY! se_beta" << round(SumVector(&se_beta.vector) * 100.)/100  << endl;
         // cout << "HEY! se_B" << round(SumVector(&se_B.vector) * 100.)/100  << endl;

@@ -7,6 +7,7 @@
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
 
+#define ROUND(f) round(f * 10000.)/10000
 #if defined NDEBUG
 #define debug_msg(msg)
 #else

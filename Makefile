@@ -16,6 +16,7 @@ WITH_OPENBLAS   =
 NO_INTEL_COMPAT =
 FORCE_32BIT     =
 FORCE_DYNAMIC   =
+GCC_FLAGS       = # extra flags, e.g. -O3
 DIST_NAME       = gemma-0.97.1
 
 # --------------------------------------------------------------------
@@ -36,11 +37,10 @@ else
 endif
 
 ifdef DEBUG
-  # development mode
-  CPPFLAGS = -g -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+  CPPFLAGS = -g $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
 else
-  # release
-  CPPFLAGS = -DNDEBUG -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+  # release mode
+  CPPFLAGS = -DNDEBUG $(GCC_FLAGS) -O3 -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
 endif
 
 ifdef SHOW_COMPILER_WARNINGS
@@ -50,7 +50,7 @@ endif
 ifdef FORCE_DYNAMIC
   LIBS = -lgsl -lgslcblas -pthread -lz
 else
-  LIBS = -llapack -lblas -L$(HOME)/.guix-profile/lib -Xlinker -t $(HOME)/opt/gsl1/lib/libgsl.a $(HOME)/opt/gsl1/lib/libgslcblas.a -pthread -lz
+  CPPFLAGS += -static
 endif
 
 OUTPUT = $(BIN_DIR)/gemma
@@ -95,11 +95,6 @@ ifdef NO_INTEL_COMPAT
   else
     CPPFLAGS += -m64
   endif
-endif
-
-ifdef FORCE_DYNAMIC
-else
-  # CPPFLAGS += -static
 endif
 
 # all
