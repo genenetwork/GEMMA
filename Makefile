@@ -65,7 +65,7 @@ LIBS_LNX_D_LAPACK = -llapack
 LIBS_LNX_D_BLAS = -lblas
 LIBS_LNX_D_OPENBLAS = -lopenblas
 LIBS_MAC_D_LAPACK = -framework Veclib
-LIBS_LNX_S_LAPACK = /usr/lib/libgsl.a /usr/lib/libgslcblas.a /usr/lib/lapack/liblapack.a /usr/lib/libblas/libblas.a /usr/lib/x86_64-linux-gnu/libz.a /usr/lib/gcc/x86_64-linux-gnu/6/libgfortran.a
+LIBS_LNX_S_LAPACK = /usr/lib/libgsl.a /usr/lib/libgslcblas.a /usr/lib/lapack/liblapack.a /usr/lib/libblas/libblas.a /usr/lib/x86_64-linux-gnu/libz.a -lgfortran
 
 SOURCES += $(SRC_DIR)/param.cpp $(SRC_DIR)/gemma.cpp $(SRC_DIR)/io.cpp $(SRC_DIR)/lm.cpp $(SRC_DIR)/lmm.cpp $(SRC_DIR)/vc.cpp $(SRC_DIR)/mvlmm.cpp $(SRC_DIR)/bslmm.cpp $(SRC_DIR)/prdt.cpp $(SRC_DIR)/mathfunc.cpp $(SRC_DIR)/gzstream.cpp $(SRC_DIR)/eigenlib.cpp $(SRC_DIR)/ldr.cpp $(SRC_DIR)/bslmmdap.cpp $(SRC_DIR)/logistic.cpp $(SRC_DIR)/varcov.cpp
 HDR += $(SRC_DIR)/param.h $(SRC_DIR)/gemma.h $(SRC_DIR)/io.h $(SRC_DIR)/lm.h $(SRC_DIR)/lmm.h $(SRC_DIR)/vc.h $(SRC_DIR)/mvlmm.h $(SRC_DIR)/bslmm.h $(SRC_DIR)/prdt.h $(SRC_DIR)/mathfunc.h $(SRC_DIR)/gzstream.h $(SRC_DIR)/eigenlib.h
