@@ -255,10 +255,10 @@ void GEMMA::PrintHelp(size_t option) {
          << endl;
     cout << " to fit a multivariate linear mixed model: " << endl;
     cout << "         ./gemma -bfile [prefix] -k [filename] -lmm [num] -n "
-            "[num1] [num2] -o [prefix]"
+            "[pheno cols...] -o [prefix]"
          << endl;
     cout << "         ./gemma -g [filename] -p [filename] -a [filename] -k "
-            "[filename] -lmm [num] -n [num1] [num2] -o [prefix]"
+            "[filename] -lmm [num] -n [pheno cols...] -o [prefix]"
          << endl;
     cout << " to fit a Bayesian sparse linear mixed model: " << endl;
     cout << "         ./gemma -bfile [prefix] -bslmm [num] -o [prefix]" << endl;
@@ -544,6 +544,7 @@ void GEMMA::PrintHelp(size_t option) {
 
   if (option == 9) {
     cout << " MULTIVARIATE LINEAR MIXED MODEL OPTIONS" << endl;
+    cout << " -n [pheno cols...] - range of phenotypes" << endl;
     cout << " -pnr				     "
          << " specify the pvalue threshold to use the Newton-Raphson's method "
             "(default 0.001)"

@@ -202,10 +202,12 @@ double ScaleMatrix(gsl_matrix *G) {
       }
 */
 
-bool isMatrixPositiveDefinite(gsl_matrix *G) {
+bool isMatrixPositiveDefinite(const gsl_matrix *G) {
   enforce(G->size1 == G->size2);
+  auto G2 = gsl_matrix_alloc(G->size1, G->size2);
+  enforce_gsl(gsl_matrix_memcpy(G2,G));
   auto handler = gsl_set_error_handler_off();
-  auto s = gsl_linalg_cholesky_decomp1(G);
+  auto s = gsl_linalg_cholesky_decomp1(G2);
   gsl_set_error_handler(handler);
   return (s == GSL_SUCCESS);
 }

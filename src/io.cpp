@@ -39,6 +39,7 @@
 #include "gsl/gsl_matrix.h"
 #include "gsl/gsl_vector.h"
 
+#include "debug.h"
 #include "eigenlib.h"
 #include "gzstream.h"
 #include "io.h"
@@ -1138,7 +1139,7 @@ void ReadFile_kin(const string &file_kin, vector<int> &indicator_idv,
         if (j_total == ni_total) {
           cout << "error! number of columns in the "
                << "kinship file is larger than the number"
-               << " of phentypes for row = " << i_total << endl;
+               << " of phenotypes for row = " << i_total << endl;
           error = true;
         }
 
@@ -1211,6 +1212,9 @@ void ReadFile_kin(const string &file_kin, vector<int> &indicator_idv,
 
   infile.close();
   infile.clear();
+
+  // Now we have the Kinship matrix test it
+  enforce_msg( isMatrixPositiveDefinite(G), "K is not positive definite!" );
 
   return;
 }

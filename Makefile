@@ -118,8 +118,8 @@ $(OBJS) : $(HDR)
 	$(CPP) $(CPPFLAGS) $(HEADERS) -c $*.cpp -o $*.o
 .SUFFIXES : .cpp .c .o $(SUFFIXES)
 
-unittests: all contrib/catch/catch.hpp $(SRC_DIR)/unittests-catch.o
-	$(CPP) $(CPPFLAGS) -Icontrib/catch $(SRC_DIR)/unittests-catch.o $(filter-out $(SRC_DIR)/main.o, $(OBJS)) $(LIBS) -o ./bin/unittests
+unittests: all contrib/catch/catch.hpp $(SRC_DIR)/unittests-catch.o $(SRC_DIR)/unittests-code.o
+	$(CPP) $(CPPFLAGS) -Icontrib/catch $(SRC_DIR)/unittests-catch.o  $(SRC_DIR)/unittests-code.o $(filter-out $(SRC_DIR)/main.o, $(OBJS)) $(LIBS) -o ./bin/unittests
 	./bin/unittests
 
 fast-check: all unittests
