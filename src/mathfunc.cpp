@@ -48,8 +48,7 @@ using namespace Eigen;
 
 bool has_nan(const vector<double> v) {
   for (const auto& e: v) {
-    cout << *e << ' ';
-    if (std::isnan(*e))
+    if (std::isnan(e))
       return true;
   }
   return false;
