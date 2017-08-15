@@ -2155,6 +2155,8 @@ void GEMMA::BatchRun(PARAM &cPar) {
                cPar.se_pve_total, cPar.v_sigma2, cPar.v_se_sigma2,
                cPar.v_enrich, cPar.v_se_enrich);
 
+      assert(!has_nan(cPar.v_se_pve));
+
       // if LDSC weights, then compute the weights and run the above steps again
       if (cPar.a_mode == 62) {
         // compute the weights and normalize the weights for A
