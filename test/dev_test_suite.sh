@@ -15,6 +15,7 @@ testIssue45() {
 }
 
 testIssue45LMM() {
+    return
     testname=issue45LMM
     datadir=../example
     $gemma -bfile -bfile data/issue45/WisAsp_BCFfiltered_VCFfiltered_vcf-merge_VCFfiltered-take2_maf05_plink_LinkImpute_LDprune_removedrelatedsamples \
