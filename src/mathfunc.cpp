@@ -46,6 +46,15 @@
 using namespace std;
 using namespace Eigen;
 
+bool has_nan(const vector<double> v) {
+  for (const auto& e: v) {
+    cout << *e << ' ';
+    if (std::isnan(*e))
+      return true;
+  }
+  return false;
+}
+
 // calculate variance of a vector
 double VectorVar(const gsl_vector *v) {
   double d, m = 0.0, m2 = 0.0;

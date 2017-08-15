@@ -26,16 +26,5 @@ TEST_CASE( "Math functions", "[math]" ) {
   REQUIRE (!std::isnan(std::accumulate(v.begin(), v.end(), 0)));
   vector<double> v2 = {1.0, 2.0, std::numeric_limits<double>::quiet_NaN()};
   REQUIRE (std::isnan(v2[2]));
-  // REQUIRE (std::isnan(std::accumulate(v2.begin(), v2.end(), 0)));
-  for (auto i = v2.begin(); i != v2.end(); ++i)
-    cout << *i << ' ';
-  double multi = 1.0;
-  for (const auto& e: v2) {
-    REQUIRE( multi );
-    cout << multi << "," << e << ":";
-    multi *= e;
-  }
-  cout << multi;
-  REQUIRE(std::isnan(multi));
-  // REQUIRE (std::isnan(std::accumulate(v2.begin(), v2.end(), 1, std::multiplies<double>())));
+  REQUIRE(has_nan(v2));
 }

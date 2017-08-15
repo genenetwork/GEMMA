@@ -26,6 +26,8 @@
 using namespace std;
 using namespace Eigen;
 
+bool has_nan(const vector<double> v);
+
 double VectorVar(const gsl_vector *v);
 void CenterMatrix(gsl_matrix *G);
 void CenterMatrix(gsl_matrix *G, const gsl_vector *w);
