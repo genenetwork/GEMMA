@@ -36,6 +36,6 @@ TEST_CASE( "Math functions", "[math]" ) {
     multi *= e;
   }
   cout << multi;
-  REQUIRE(is::nan(multi));
+  REQUIRE(std::isnan(multi));
   // REQUIRE (std::isnan(std::accumulate(v2.begin(), v2.end(), 1, std::multiplies<double>())));
 }
