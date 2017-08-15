@@ -38,7 +38,7 @@ else
 endif
 
 ifdef DEBUG
-  CPPFLAGS = -g $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+  CPPFLAGS = -g $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH) -Icontrib/catch
 else
   # release mode
   CPPFLAGS = -DNDEBUG $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
@@ -118,7 +118,11 @@ $(OBJS) : $(HDR)
 	$(CPP) $(CPPFLAGS) $(HEADERS) -c $*.cpp -o $*.o
 .SUFFIXES : .cpp .c .o $(SUFFIXES)
 
-fast-check: all
+unittests: all contrib/catch/catch.hpp $(SRC_DIR)/unittests-catch.o
+	$(CPP) $(CPPFLAGS) -Icontrib/catch $(SRC_DIR)/unittests-catch.o $(filter-out $(SRC_DIR)/main.o, $(OBJS)) $(LIBS) -o ./bin/unittests
+	./bin/unittests
+
+fast-check: all unittests
 	cd test && ./dev_test_suite.sh | tee ../dev_test.log
 	grep -q 'success rate: 100%' dev_test.log
 

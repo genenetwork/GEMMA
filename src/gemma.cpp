@@ -49,6 +49,14 @@ using namespace std;
 
 GEMMA::GEMMA(void) : version("0.97.1"), date("08/07/2017"), year("2017") {}
 
+void gemma_gsl_error_handler (const char * reason,
+                              const char * file,
+                              int line, int gsl_errno) {
+  cerr << "GSL ERROR: " << reason << " in " << file
+       << " at line " << line << " errno " << gsl_errno <<endl;
+  exit(22);
+}
+
 void GEMMA::PrintHeader(void) {
   cout << endl;
   cout << "*********************************************************" << endl;

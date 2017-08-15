@@ -38,6 +38,7 @@
 #include "gsl/gsl_matrix.h"
 #include "gsl/gsl_vector.h"
 
+#include "debug.h"
 #include "eigenlib.h"
 #include "lapack.h"
 #include "mathfunc.h"
@@ -185,6 +186,28 @@ double ScaleMatrix(gsl_matrix *G) {
   }
 
   return d;
+}
+
+//    Function IsPosDefinite(A: Array[I, J]; I, J: Index) :=
+//        Min(EigenDecomp(A + Transpose(A, I, J), I, J)[.item = 'value'] > 0, J)
+
+/*
+      flag_pd = 1;
+      gsl_matrix_memcpy(V_temp, V_e);
+      EigenDecomp(V_temp, U_temp, D_temp, 0);
+      for (size_t i = 0; i < d_size; i++) {
+        if (gsl_vector_get(D_temp, i) <= 0) {
+          flag_pd = 0;
+        }
+      }
+*/
+
+bool isMatrixPositiveDefinite(gsl_matrix *G) {
+  enforce(G->size1 == G->size2);
+  auto handler = gsl_set_error_handler_off();
+  auto s = gsl_linalg_cholesky_decomp1(G);
+  gsl_set_error_handler(handler);
+  return (s == GSL_SUCCESS);
 }
 
 double SumVector(const gsl_vector *v) {

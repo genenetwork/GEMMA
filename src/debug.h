@@ -4,6 +4,10 @@
 #include <assert.h>
 #include <iostream>
 
+void gemma_gsl_error_handler (const char * reason,
+                              const char * file,
+                              int line, int gsl_errno);
+
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
 
