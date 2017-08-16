@@ -703,6 +703,7 @@ void GEMMA::PrintHelp(size_t option) {
 
   if (option == 14) {
     cout << " DEBUG OPTIONS" << endl;
+    cout << " -no-checks               disable checks" << endl;
     cout << " -silence                 silent terminal display" << endl;
     cout << " -debug                   debug output" << endl;
     cout << " -nind       [num]        read up to num individuals" << endl;
@@ -1587,6 +1588,8 @@ void GEMMA::Assign(int argc, char **argv, PARAM &cPar) {
       cPar.window_ns = atoi(str.c_str());
     } else if (strcmp(argv[i], "-debug") == 0) {
       cPar.mode_debug = true;
+    } else if (strcmp(argv[i], "-no-checks") == 0) {
+      cPar.mode_check = false;
     } else {
       cout << "error! unrecognized option: " << argv[i] << endl;
       cPar.error = true;
@@ -1650,7 +1653,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
       }
 
       ReadFile_kin(cPar.file_kin, indicator_all, cPar.mapID2num, cPar.k_mode,
-                   cPar.error, G);
+                   cPar.error, G, cPar.mode_check);
       if (cPar.error == true) {
         cout << "error! fail to read kinship/relatedness file. " << endl;
         return;
@@ -1717,13 +1720,14 @@ void GEMMA::BatchRun(PARAM &cPar) {
 
     // read relatedness matrix G, and matrix G_full
     ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num, cPar.k_mode,
-                 cPar.error, G);
+                 cPar.error, G, cPar.mode_check);
     if (cPar.error == true) {
       cout << "error! fail to read kinship/relatedness file. " << endl;
       return;
     }
+    // FIXME: this is strange, why read twice?
     ReadFile_kin(cPar.file_kin, cPar.indicator_cvt, cPar.mapID2num, cPar.k_mode,
-                 cPar.error, G_full);
+                 cPar.error, G_full, cPar.mode_check);
     if (cPar.error == true) {
       cout << "error! fail to read kinship/relatedness file. " << endl;
       return;
@@ -1876,6 +1880,13 @@ void GEMMA::BatchRun(PARAM &cPar) {
     if (cPar.error == true) {
       cout << "error! fail to calculate relatedness matrix. " << endl;
       return;
+    }
+
+    // Now we have the Kinship matrix test it
+    if (cPar.mode_check) {
+      if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
+      enforce_msg(isMatrixSymmetric(G),"K is not symmetric!" );
+      enforce_msg(isMatrixPositiveDefinite(G),"K is not positive definite!");
     }
 
     if (cPar.a_mode == 21) {
@@ -2186,7 +2197,9 @@ void GEMMA::BatchRun(PARAM &cPar) {
                  cPar.ni_study, cPar.v_pve, cPar.v_se_pve, cPar.pve_total,
                  cPar.se_pve_total, cPar.v_sigma2, cPar.v_se_sigma2,
                  cPar.v_enrich, cPar.v_se_enrich);
+        assert(!has_nan(cPar.v_se_pve));
       }
+
 
       gsl_vector_set(s, cPar.n_vc, cPar.ni_test);
 
@@ -2276,6 +2289,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
                cPar.v_pve, cPar.v_se_pve, cPar.pve_total, cPar.se_pve_total,
                cPar.v_sigma2, cPar.v_se_sigma2, cPar.v_enrich,
                cPar.v_se_enrich);
+      assert(!has_nan(cPar.v_se_pve));
 
       gsl_vector_view s_sub = gsl_vector_subvector(s, 0, cPar.n_vc);
       gsl_vector_memcpy(&s_sub.vector, s_ref);
@@ -2306,7 +2320,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
       // read kinship matrices
       if (!(cPar.file_mk).empty()) {
         ReadFile_mk(cPar.file_mk, cPar.indicator_idv, cPar.mapID2num,
-                    cPar.k_mode, cPar.error, G);
+                    cPar.k_mode, cPar.error, G, cPar.mode_check);
         if (cPar.error == true) {
           cout << "error! fail to read kinship/relatedness file. " << endl;
           return;
@@ -2328,7 +2342,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
         }
       } else if (!(cPar.file_kin).empty()) {
         ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                     cPar.k_mode, cPar.error, G);
+                     cPar.k_mode, cPar.error, G, cPar.mode_check);
         if (cPar.error == true) {
           cout << "error! fail to read kinship/relatedness file. " << endl;
           return;
@@ -2647,6 +2661,7 @@ return;}
     CalcCIss(Xz, XWz, XtXWz, S, Svar, w, z, s_vec, vec_cat, cPar.v_pve,
              cPar.v_se_pve, cPar.pve_total, cPar.se_pve_total, cPar.v_sigma2,
              cPar.v_se_sigma2, cPar.v_enrich, cPar.v_se_enrich);
+      assert(!has_nan(cPar.v_se_pve));
 
     // write files
     // cPar.WriteMatrix (XWz, "XWz");
@@ -2695,7 +2710,7 @@ return;}
     // read relatedness matrix G
     if (!(cPar.file_kin).empty()) {
       ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                   cPar.k_mode, cPar.error, G);
+                   cPar.k_mode, cPar.error, G, cPar.mode_check);
       if (cPar.error == true) {
         cout << "error! fail to read kinship/relatedness file. " << endl;
         return;
@@ -3010,7 +3025,7 @@ return;}
 
         // read relatedness matrix G
         ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                     cPar.k_mode, cPar.error, G);
+                     cPar.k_mode, cPar.error, G, cPar.mode_check);
         if (cPar.error == true) {
           cout << "error! fail to read kinship/relatedness file. " << endl;
           return;
@@ -3126,7 +3141,7 @@ return;}
 
           // read relatedness matrix G
           ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                       cPar.k_mode, cPar.error, G);
+                       cPar.k_mode, cPar.error, G, cPar.mode_check);
           if (cPar.error == true) {
             cout << "error! fail to read kinship/relatedness file. " << endl;
             return;
@@ -3340,6 +3355,7 @@ void GEMMA::WriteLog(int argc, char **argv, PARAM &cPar) {
       outfile << "  " << cPar.v_se_pve[i];
     }
     outfile << endl;
+    assert(!has_nan(cPar.v_se_pve));
 
     if (cPar.n_vc > 1) {
       outfile << "## total pve = " << cPar.pve_total << endl;

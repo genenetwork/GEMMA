@@ -10,12 +10,12 @@ testIssue45() {
     assertEquals 0 $?
     outfn=output/$outn.cXX.txt
     assertEquals "439" `wc -l < $outfn`
-    assertEquals "172.26" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
+    assertEquals "-1209.36" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 testIssue45LMM() {
     return
-    # univariate
+    # univariate version
     testname=issue45LMM
     datadir=../example
     $gemma -bfile -bfile data/issue45/WisAsp_BCFfiltered_VCFfiltered_vcf-merge_VCFfiltered-take2_maf05_plink_LinkImpute_LDprune_removedrelatedsamples \
@@ -30,7 +30,9 @@ testIssue45LMM() {
     assertEquals "3442900275.33" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
+# Long running!
 testIssue45LMM4() {
+    return
     testname=issue45LMM4
     datadir=../example
     $gemma -bfile -bfile data/issue45/WisAsp_BCFfiltered_VCFfiltered_vcf-merge_VCFfiltered-take2_maf05_plink_LinkImpute_LDprune_removedrelatedsamples \
@@ -46,7 +48,6 @@ testIssue45LMM4() {
 }
 
 testIssue45LMM4b() {
-    return
     testname=issue45LMM4b
     datadir=../example
     $gemma -bfile -bfile data/issue45/WisAsp_BCFfiltered_VCFfiltered_vcf-merge_VCFfiltered-take2_maf05_plink_LinkImpute_LDprune_removedrelatedsamples \
@@ -57,8 +58,8 @@ testIssue45LMM4b() {
            -o $testname
     assertEquals 0 $?
     outfn=output/$testname.assoc.txt
-    assertEquals "8001" `wc -l < $outfn`
-    assertEquals "9350026.52" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
+    assertEquals "139571" `wc -l < $outfn`
+    assertEquals "5508486924.44" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
 # Test for https://github.com/genetics-statistics/GEMMA/issues/26

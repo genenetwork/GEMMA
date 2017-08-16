@@ -78,10 +78,10 @@ void Plink_ReadOneSNP(const int pos, const vector<int> &indicator_idv,
 
 void ReadFile_kin(const string &file_kin, vector<int> &indicator_idv,
                   map<string, int> &mapID2num, const size_t k_mode, bool &error,
-                  gsl_matrix *G);
+                  gsl_matrix *G, bool do_check);
 void ReadFile_mk(const string &file_mk, vector<int> &indicator_idv,
                  map<string, int> &mapID2num, const size_t k_mode, bool &error,
-                 gsl_matrix *G);
+                 gsl_matrix *G, bool do_check);
 void ReadFile_eigenU(const string &file_u, bool &error, gsl_matrix *U);
 void ReadFile_eigenD(const string &file_d, bool &error, gsl_vector *eval);
 

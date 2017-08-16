@@ -37,6 +37,7 @@
 #include "gsl/gsl_linalg.h"
 #include "gsl/gsl_matrix.h"
 #include "gsl/gsl_vector.h"
+#include "gsl/gsl_eigen.h"
 
 #include "debug.h"
 #include "eigenlib.h"
@@ -210,6 +211,25 @@ double ScaleMatrix(gsl_matrix *G) {
       }
 */
 
+bool isMatrixSymmetric(const gsl_matrix *G) {
+  enforce(G->size1 == G->size2);
+  auto m = G->data;
+  // upper triangle
+  auto size = G->size1;
+  for(auto c = 0; c < size; c++) {
+    for(auto r = 0; r < c; r++) {
+      int x1 = c, y1 = r, x2 = r, y2 = c;
+      auto idx1 = y1*size+x1, idx2 = y2*size+x2;
+      // printf("(%d,%d %f - %d,%d %f)",x1,y1,m[idx1],x2,y2,m[idx2]);
+      if(m[idx1] != m[idx2]) {
+        cout << "Coordinates (" << c << "," << r << ")" << m[idx1] << ":" << m[idx2] << "!" << endl;
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 bool isMatrixPositiveDefinite(const gsl_matrix *G) {
   enforce(G->size1 == G->size2);
   auto G2 = gsl_matrix_alloc(G->size1, G->size2);
@@ -217,7 +237,30 @@ bool isMatrixPositiveDefinite(const gsl_matrix *G) {
   auto handler = gsl_set_error_handler_off();
   auto s = gsl_linalg_cholesky_decomp1(G2);
   gsl_set_error_handler(handler);
+  gsl_matrix_free(G2);
   return (s == GSL_SUCCESS);
+}
+
+// Check whether eigen values are larger than *min*
+bool checkMatrixEigen(const gsl_matrix *G, double min) {
+  enforce(G->size1 == G->size2);
+  auto G2 = gsl_matrix_alloc(G->size1, G->size2);
+  enforce_gsl(gsl_matrix_memcpy(G2,G));
+  auto eworkspace = gsl_eigen_symm_alloc (G->size1);
+  enforce(eworkspace);
+  gsl_vector *eval = gsl_vector_alloc(G->size1);
+  enforce_gsl(gsl_eigen_symm(G2, eval, eworkspace));
+  bool ret_valid = true;
+  for (auto i=0; i<G->size1; i++) {
+    if (eval->data[i] < min) {
+      debug_msg(eval->data[i]);
+      ret_valid = false;
+    }
+  }
+  gsl_eigen_symm_free(eworkspace);
+  gsl_vector_free(eval);
+  gsl_matrix_free(G2);
+  return ret_valid;
 }
 
 double SumVector(const gsl_vector *v) {

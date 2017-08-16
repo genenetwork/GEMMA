@@ -111,7 +111,8 @@ public:
 
 class PARAM {
 public:
-  // IO-related parameters.
+  // IO-related parameters
+  bool mode_check = true;
   bool mode_silence;
   bool mode_debug = false;
   uint issue; // enable tests for issue on github tracker

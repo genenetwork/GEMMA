@@ -8,6 +8,8 @@ void gemma_gsl_error_handler (const char * reason,
                               const char * file,
                               int line, int gsl_errno);
 
+#define warning_msg(msg) cerr << "**** WARNING: " << msg << endl;
+
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
 
@@ -16,7 +18,7 @@ void gemma_gsl_error_handler (const char * reason,
 #define debug_msg(msg)
 #define assert_issue(is_issue, expr)
 #else
-#define debug_msg(msg) cout << "**** DEBUG: " << msg << endl;
+#define debug_msg(msg) cerr << "**** DEBUG: " << msg << endl;
 #define assert_issue(is_issue, expr) \
   ((is_issue) ? enforce_msg(expr,"FAIL: ISSUE assert") : __ASSERT_VOID_CAST(0))
 
