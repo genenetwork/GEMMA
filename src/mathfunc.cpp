@@ -253,6 +253,7 @@ bool isMatrixPositiveDefinite(const gsl_matrix *G) {
 }
 
 // Check whether eigen values are larger than *min*
+// by default 1E-5.
 bool checkMatrixEigen(const gsl_matrix *G, double min) {
   enforce(G->size1 == G->size2);
   auto G2 = gsl_matrix_alloc(G->size1, G->size2);

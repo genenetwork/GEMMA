@@ -47,8 +47,8 @@ testIssue45LMM4() {
     assertEquals "9352494.49" `perl -nle 'foreach $x (split(/\s+/,$_)) { $sum += sprintf("%.2f",(substr($x,,0,6))) } END { printf "%.2f",$sum }' $outfn`
 }
 
+# issue 45: run with the fixed K
 testIssue45LMM4b() {
-    return
     testname=issue45LMM4b
     datadir=../example
     $gemma -bfile -bfile data/issue45/WisAsp_BCFfiltered_VCFfiltered_vcf-merge_VCFfiltered-take2_maf05_plink_LinkImpute_LDprune_removedrelatedsamples \
