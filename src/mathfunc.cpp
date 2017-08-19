@@ -32,6 +32,10 @@
 #include <vector>
 
 #include "Eigen/Dense"
+
+#include "gsl/gsl_version.h"
+#pragma message "GSL version " GSL_VERSION
+
 #include "gsl/gsl_blas.h"
 #include "gsl/gsl_cdf.h"
 #include "gsl/gsl_linalg.h"
@@ -235,7 +239,11 @@ bool isMatrixPositiveDefinite(const gsl_matrix *G) {
   auto G2 = gsl_matrix_alloc(G->size1, G->size2);
   enforce_gsl(gsl_matrix_memcpy(G2,G));
   auto handler = gsl_set_error_handler_off();
+#if GSL_MAJOR_VERSION >= 2
   auto s = gsl_linalg_cholesky_decomp1(G2);
+#else
+  auto s = gsl_linalg_cholesky_decomp(G2);
+#endif
   gsl_set_error_handler(handler);
   gsl_matrix_free(G2);
   return (s == GSL_SUCCESS);
