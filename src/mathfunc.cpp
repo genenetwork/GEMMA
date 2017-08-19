@@ -229,7 +229,7 @@ bool isMatrixSymmetric(const gsl_matrix *G) {
       auto idx1 = y1*size+x1, idx2 = y2*size+x2;
       // printf("(%d,%d %f - %d,%d %f)",x1,y1,m[idx1],x2,y2,m[idx2]);
       if(m[idx1] != m[idx2]) {
-        cout << "Coordinates (" << c << "," << r << ")" << m[idx1] << ":" << m[idx2] << "!" << endl;
+        cout << "Mismatch coordinates (" << c << "," << r << ")" << m[idx1] << ":" << m[idx2] << "!" << endl;
         return false;
       }
     }

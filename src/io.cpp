@@ -1102,7 +1102,7 @@ void Plink_ReadOneSNP(const int pos, const vector<int> &indicator_idv,
 
 void ReadFile_kin(const string &file_kin, vector<int> &indicator_idv,
                   map<string, int> &mapID2num, const size_t k_mode, bool &error,
-                  gsl_matrix *G, bool do_check) {
+                  gsl_matrix *G) {
   igzstream infile(file_kin.c_str(), igzstream::in);
   if (!infile) {
     cout << "error! fail to open kinship file: " << file_kin << endl;
@@ -1213,18 +1213,12 @@ void ReadFile_kin(const string &file_kin, vector<int> &indicator_idv,
   infile.close();
   infile.clear();
 
-  if (do_check) {
-    // Now we have the Kinship matrix test it
-    if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
-    if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
-    if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
-  }
   return;
 }
 
 void ReadFile_mk(const string &file_mk, vector<int> &indicator_idv,
                  map<string, int> &mapID2num, const size_t k_mode, bool &error,
-                 gsl_matrix *G, bool do_check) {
+                 gsl_matrix *G) {
   igzstream infile(file_mk.c_str(), igzstream::in);
   if (!infile) {
     cout << "error! fail to open file: " << file_mk << endl;
@@ -1240,7 +1234,7 @@ void ReadFile_mk(const string &file_mk, vector<int> &indicator_idv,
     gsl_matrix_view G_sub =
         gsl_matrix_submatrix(G, 0, i * G->size1, G->size1, G->size1);
     ReadFile_kin(file_kin, indicator_idv, mapID2num, k_mode, error,
-                 &G_sub.matrix, do_check);
+                 &G_sub.matrix);
     i++;
   }
 

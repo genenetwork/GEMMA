@@ -1,4 +1,4 @@
-language: g++
+language: C++
 compiler: gcc
 matrix:
   include:

@@ -44,6 +44,7 @@
 #include "prdt.h"
 #include "varcov.h"
 #include "vc.h"
+#include "debug.h"
 
 using namespace std;
 
@@ -1653,7 +1654,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
       }
 
       ReadFile_kin(cPar.file_kin, indicator_all, cPar.mapID2num, cPar.k_mode,
-                   cPar.error, G, cPar.mode_check);
+                   cPar.error, G);
       if (cPar.error == true) {
         cout << "error! fail to read kinship/relatedness file. " << endl;
         return;
@@ -1720,14 +1721,14 @@ void GEMMA::BatchRun(PARAM &cPar) {
 
     // read relatedness matrix G, and matrix G_full
     ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num, cPar.k_mode,
-                 cPar.error, G, cPar.mode_check);
+                 cPar.error, G);
     if (cPar.error == true) {
       cout << "error! fail to read kinship/relatedness file. " << endl;
       return;
     }
     // FIXME: this is strange, why read twice?
     ReadFile_kin(cPar.file_kin, cPar.indicator_cvt, cPar.mapID2num, cPar.k_mode,
-                 cPar.error, G_full, cPar.mode_check);
+                 cPar.error, G_full);
     if (cPar.error == true) {
       cout << "error! fail to read kinship/relatedness file. " << endl;
       return;
@@ -1736,6 +1737,12 @@ void GEMMA::BatchRun(PARAM &cPar) {
     // center matrix G
     CenterMatrix(G);
     CenterMatrix(G_full);
+    if (cPar.mode_check) {
+      if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
+      if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
+      if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
+    }
+
 
     // eigen-decomposition and calculate trace_G
     cout << "Start Eigen-Decomposition..." << endl;
@@ -1884,9 +1891,9 @@ void GEMMA::BatchRun(PARAM &cPar) {
 
     // Now we have the Kinship matrix test it
     if (cPar.mode_check) {
-      if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
-      enforce_msg(isMatrixSymmetric(G),"K is not symmetric!" );
-      enforce_msg(isMatrixPositiveDefinite(G),"K is not positive definite!");
+      if (!checkMatrixEigen(G)) warning_msg("Computed K has small or negative eigenvalues!");
+      if (!isMatrixSymmetric(G)) warning_msg("Computed K is not symmetric!" );
+      if (!isMatrixPositiveDefinite(G)) warning_msg("Computed K is not positive definite!");
     }
 
     if (cPar.a_mode == 21) {
@@ -2320,7 +2327,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
       // read kinship matrices
       if (!(cPar.file_mk).empty()) {
         ReadFile_mk(cPar.file_mk, cPar.indicator_idv, cPar.mapID2num,
-                    cPar.k_mode, cPar.error, G, cPar.mode_check);
+                    cPar.k_mode, cPar.error, G);
         if (cPar.error == true) {
           cout << "error! fail to read kinship/relatedness file. " << endl;
           return;
@@ -2342,7 +2349,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
         }
       } else if (!(cPar.file_kin).empty()) {
         ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                     cPar.k_mode, cPar.error, G, cPar.mode_check);
+                     cPar.k_mode, cPar.error, G);
         if (cPar.error == true) {
           cout << "error! fail to read kinship/relatedness file. " << endl;
           return;
@@ -2350,6 +2357,11 @@ void GEMMA::BatchRun(PARAM &cPar) {
 
         // center matrix G
         CenterMatrix(G);
+        if (cPar.mode_check) {
+          if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
+          if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
+          if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
+        }
 
         (cPar.v_traceG).clear();
         double d = 0;
@@ -2710,7 +2722,7 @@ return;}
     // read relatedness matrix G
     if (!(cPar.file_kin).empty()) {
       ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                   cPar.k_mode, cPar.error, G, cPar.mode_check);
+                   cPar.k_mode, cPar.error, G);
       if (cPar.error == true) {
         cout << "error! fail to read kinship/relatedness file. " << endl;
         return;
@@ -2718,6 +2730,11 @@ return;}
 
       // center matrix G
       CenterMatrix(G);
+      if (cPar.mode_check) {
+        if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
+        if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
+        if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
+      }
 
       // is residual weights are provided, then
       if (!cPar.file_weight.empty()) {
@@ -3025,7 +3042,7 @@ return;}
 
         // read relatedness matrix G
         ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                     cPar.k_mode, cPar.error, G, cPar.mode_check);
+                     cPar.k_mode, cPar.error, G);
         if (cPar.error == true) {
           cout << "error! fail to read kinship/relatedness file. " << endl;
           return;
@@ -3033,6 +3050,11 @@ return;}
 
         // center matrix G
         CenterMatrix(G);
+        if (cPar.mode_check) {
+          if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
+          if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
+          if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
+        }
       } else {
         cPar.ReadGenotypes(UtX, G, true);
       }
@@ -3141,7 +3163,7 @@ return;}
 
           // read relatedness matrix G
           ReadFile_kin(cPar.file_kin, cPar.indicator_idv, cPar.mapID2num,
-                       cPar.k_mode, cPar.error, G, cPar.mode_check);
+                       cPar.k_mode, cPar.error, G);
           if (cPar.error == true) {
             cout << "error! fail to read kinship/relatedness file. " << endl;
             return;
@@ -3149,6 +3171,12 @@ return;}
 
           // center matrix G
           CenterMatrix(G);
+          if (cPar.mode_check) {
+            if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
+            if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
+            if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
+          }
+
         } else {
           cPar.ReadGenotypes(UtX, G, true);
         }

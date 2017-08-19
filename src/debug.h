@@ -8,17 +8,22 @@ void gemma_gsl_error_handler (const char * reason,
                               const char * file,
                               int line, int gsl_errno);
 
-#define warning_msg(msg) cerr << "**** WARNING: " << msg << endl;
 
 // enforce works like assert but also when NDEBUG is set (i.e., it
 // always works). enforce_msg prints message instead of expr
 
 #define ROUND(f) round(f * 10000.)/10000
+
 #if defined NDEBUG
+
+#define warning_msg(msg) cerr << "**** WARNING: " << msg << endl;
 #define debug_msg(msg)
 #define assert_issue(is_issue, expr)
-#else
-#define debug_msg(msg) cerr << "**** DEBUG: " << msg << endl;
+
+#else // DEBUG
+
+#define warning_msg(msg) cerr << "**** WARNING: " << msg << " in " << __FILE__ << " at line " << __LINE__ << " in " << __PRETTY_FUNCTION__ << endl;
+#define debug_msg(msg) cerr << "**** DEBUG: " << msg << " in " << __FILE__ << " at line " << __LINE__ << " in " << __PRETTY_FUNCTION__ << endl;
 #define assert_issue(is_issue, expr) \
   ((is_issue) ? enforce_msg(expr,"FAIL: ISSUE assert") : __ASSERT_VOID_CAST(0))
 
@@ -29,7 +34,7 @@ inline void __enforce_fail(const char *__assertion, const char *__file,
                     unsigned int __line,
                     const char *__function)
 {
-  std::cout << "ERROR: Enforce failed for " << __assertion << " in " << __file << " at line " << __line << " in " << __function << std::endl;
+  std::cout << "ERROR: Enforce failed for " << __assertion << " in " << __file << " at line " << __line << " in " << __PRETTY_FUNCTION__ << std::endl;
   exit(1);
 }
 
@@ -59,6 +64,5 @@ inline void __enforce_fail(const char *__assertion, const char *__file,
        ? __ASSERT_VOID_CAST(0)                                                 \
        : __enforce_fail(gsl_strerror(COMBINE(res, __LINE__)), __FILE__,         \
                         __LINE__, __ASSERT_FUNCTION))
-
 
 #endif
