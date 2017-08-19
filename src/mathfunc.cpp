@@ -34,7 +34,10 @@
 #include "Eigen/Dense"
 
 #include "gsl/gsl_version.h"
+
+#if GSL_MAJOR_VERSION < 2
 #pragma message "GSL version " GSL_VERSION
+#endif
 
 #include "gsl/gsl_blas.h"
 #include "gsl/gsl_cdf.h"
