@@ -24,8 +24,7 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libopenblas-dev zlib1g-dev
   - sudo apt-get install -y libeigen3-dev
-  - sudo apt-cache pkgnames | grep gsl
-  - sudo apt-get install -y libgsl-dev
+  - sudo apt-get install -y libgsl0-dev
   - sudo apt-get install -y liblapack-dev
   # for the static release version we need the following
   # - sudo apt-get install -y gfortran-dev
