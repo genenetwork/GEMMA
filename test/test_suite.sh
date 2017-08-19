@@ -116,9 +116,9 @@ shunit2=`which shunit2`
 if [ -x "$shunit2" ]; then
     echo run system shunit2
     . $shunit2
-elif [ -e shunit2-2.0.3/src/shell/shunit2 ]; then
+elif [ -e ../contrib/shunit2-2.0.3/src/shell/shunit2 ]; then
     echo run shunit2 provided in gemma repo
-    . shunit2-2.0.3/src/shell/shunit2
+    . ../contrib/shunit2-2.0.3/src/shell/shunit2
 else
     echo "Can not find shunit2 - see INSTALL.md"
 fi

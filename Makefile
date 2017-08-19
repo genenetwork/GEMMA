@@ -29,6 +29,7 @@ EIGEN_INCLUDE_PATH=/usr/include/eigen3
 BIN_DIR  = ./bin
 
 SRC_DIR  = ./src
+TEST_SRC_DIR  = ./test/src
 
 ifdef CXX
   CPP = $(CXX)
@@ -38,10 +39,10 @@ else
 endif
 
 ifdef DEBUG
-  CPPFLAGS = -g $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH) -Icontrib/catch
+  CPPFLAGS = -g $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH) -Icontrib/catch-1.9.7 -Isrc
 else
   # release mode
-  CPPFLAGS = -DNDEBUG $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH)
+  CPPFLAGS = -DNDEBUG $(GCC_FLAGS) -std=gnu++11 -isystem/$(EIGEN_INCLUDE_PATH) -Icontrib/catch-1.9.7 -Isrc
 endif
 
 ifdef SHOW_COMPILER_WARNINGS
@@ -118,8 +119,8 @@ $(OBJS) : $(HDR)
 	$(CPP) $(CPPFLAGS) $(HEADERS) -c $*.cpp -o $*.o
 .SUFFIXES : .cpp .c .o $(SUFFIXES)
 
-unittests: all contrib/catch/catch.hpp $(SRC_DIR)/unittests-catch.o $(SRC_DIR)/unittests-code.o
-	$(CPP) $(CPPFLAGS) -Icontrib/catch $(SRC_DIR)/unittests-catch.o  $(SRC_DIR)/unittests-code.o $(filter-out $(SRC_DIR)/main.o, $(OBJS)) $(LIBS) -o ./bin/unittests
+unittests: all contrib/catch-1.9.7/catch.hpp $(TEST_SRC_DIR)/unittests-main.o $(TEST_SRC_DIR)/unittests-math.o
+	$(CPP) $(CPPFLAGS) $(TEST_SRC_DIR)/unittests-main.o  $(TEST_SRC_DIR)/unittests-math.o $(filter-out $(SRC_DIR)/main.o, $(OBJS)) $(LIBS) -o ./bin/unittests
 	./bin/unittests
 
 fast-check: all unittests
@@ -133,8 +134,11 @@ slow-check: all
 check: fast-check slow-check
 
 clean:
-	rm -rf ${SRC_DIR}/*.o ${SRC_DIR}/*~ *~ $(OUTPUT)
-	rm -f test/output/*
+	rm -rvf $(SRC_DIR)/*.o
+	rm -rvf $(SRC_DIR)/*~
+	rm -rvf $(TEST_SRC_DIR)/*.o
+	rm -rvf $(OUTPUT)
+	rm -vf test/output/*
 
 DIST_COMMON = COPYING.txt README.txt Makefile
 DIST_SUBDIRS = src doc example bin
