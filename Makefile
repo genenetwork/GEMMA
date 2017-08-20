@@ -124,21 +124,23 @@ unittests: all contrib/catch-1.9.7/catch.hpp $(TEST_SRC_DIR)/unittests-main.o $(
 	./bin/unittests
 
 fast-check: all unittests
+	rm -vf test/output/*
 	cd test && ./dev_test_suite.sh | tee ../dev_test.log
 	grep -q 'success rate: 100%' dev_test.log
 
 slow-check: all
+	rm -vf test/output/*
 	cd test && ./test_suite.sh | tee ../test.log
 	grep -q 'success rate: 100%' test.log
 
 check: fast-check slow-check
 
 clean:
-	rm -rvf $(SRC_DIR)/*.o
-	rm -rvf $(SRC_DIR)/*~
-	rm -rvf $(TEST_SRC_DIR)/*.o
-	rm -rvf $(OUTPUT)
-	rm -vf test/output/*
+	rm -vf $(SRC_DIR)/*.o
+	rm -vf $(SRC_DIR)/*~
+	rm -vf $(TEST_SRC_DIR)/*.o
+	rm -vf $(OUTPUT)
+	rm -vf ./bin/unittests
 
 DIST_COMMON = COPYING.txt README.txt Makefile
 DIST_SUBDIRS = src doc example bin
