@@ -9,10 +9,11 @@ void gemma_gsl_error_handler (const char * reason,
                               int line, int gsl_errno);
 
 
-// enforce works like assert but also when NDEBUG is set (i.e., it
-// always works). enforce_msg prints message instead of expr
+// Validation routines
+void do_validate_K(const gsl_matrix *K, bool do_check, const char *__file, int __line);
 
 #define ROUND(f) round(f * 10000.)/10000
+#define validate_K(K,check) do_validate_K(K,check,__FILE__,__LINE__)
 
 #if defined NDEBUG
 
@@ -22,12 +23,20 @@ void gemma_gsl_error_handler (const char * reason,
 
 #else // DEBUG
 
+#define warning_at_msg(__file,__line,msg) cerr << "**** WARNING: " << msg << " in " << __file << " at line " << __line << endl;
 #define warning_msg(msg) cerr << "**** WARNING: " << msg << " in " << __FILE__ << " at line " << __LINE__ << " in " << __PRETTY_FUNCTION__ << endl;
 #define debug_msg(msg) cerr << "**** DEBUG: " << msg << " in " << __FILE__ << " at line " << __LINE__ << " in " << __PRETTY_FUNCTION__ << endl;
 #define assert_issue(is_issue, expr) \
   ((is_issue) ? enforce_msg(expr,"FAIL: ISSUE assert") : __ASSERT_VOID_CAST(0))
 
+inline void fail_at_msg(const char *__file, int __line, const char *msg) {
+  std::cerr << "**** FAIL: " << msg << " in " << __file << " at line " << __line << std::endl;
+  exit(1);
+}
 #endif
+
+// enforce works like assert but also when NDEBUG is set (i.e., it
+// always works). enforce_msg prints message instead of expr
 
 /* This prints an "Assertion failed" message and aborts.  */
 inline void __enforce_fail(const char *__assertion, const char *__file,

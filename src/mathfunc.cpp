@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "Eigen/Dense"
@@ -204,20 +205,6 @@ double ScaleMatrix(gsl_matrix *G) {
   return d;
 }
 
-//    Function IsPosDefinite(A: Array[I, J]; I, J: Index) :=
-//        Min(EigenDecomp(A + Transpose(A, I, J), I, J)[.item = 'value'] > 0, J)
-
-/*
-      flag_pd = 1;
-      gsl_matrix_memcpy(V_temp, V_e);
-      EigenDecomp(V_temp, U_temp, D_temp, 0);
-      for (size_t i = 0; i < d_size; i++) {
-        if (gsl_vector_get(D_temp, i) <= 0) {
-          flag_pd = 0;
-        }
-      }
-*/
-
 bool isMatrixSymmetric(const gsl_matrix *G) {
   enforce(G->size1 == G->size2);
   auto m = G->data;
@@ -252,26 +239,74 @@ bool isMatrixPositiveDefinite(const gsl_matrix *G) {
   return (s == GSL_SUCCESS);
 }
 
-// Check whether eigen values are larger than *min*
-// by default 1E-5.
-bool checkMatrixEigen(const gsl_matrix *G, double min) {
+gsl_vector *getEigenValues(const gsl_matrix *G) {
   enforce(G->size1 == G->size2);
   auto G2 = gsl_matrix_alloc(G->size1, G->size2);
   enforce_gsl(gsl_matrix_memcpy(G2,G));
-  auto eworkspace = gsl_eigen_symm_alloc (G->size1);
+  auto eworkspace = gsl_eigen_symm_alloc(G->size1);
   enforce(eworkspace);
-  gsl_vector *eval = gsl_vector_alloc(G->size1);
-  enforce_gsl(gsl_eigen_symm(G2, eval, eworkspace));
-  bool ret_valid = true;
-  for (auto i=0; i<G->size1; i++) {
-    if (eval->data[i] < min) {
-      debug_msg(eval->data[i]);
-      ret_valid = false;
+  gsl_vector *eigenvalues = gsl_vector_alloc(G->size1);
+  enforce_gsl(gsl_eigen_symm(G2, eigenvalues, eworkspace));
+  gsl_eigen_symm_free(eworkspace);
+  gsl_matrix_free(G2);
+  return eigenvalues;
+}
+
+// Check whether eigen values are larger than *min*
+// by default 1E-5.
+// Returns success, eigen min, eigen max
+
+tuple<double, double> abs_minmax(const gsl_vector *v) {
+  auto min = std::abs(v->data[0]);
+  auto max = std::abs(v->data[0]);
+  for (auto i=0; i<v->size; i++) {
+    auto value = std::abs(v->data[i]);
+    if (value < min)
+      min = value;
+    if (value > max)
+      max = value;
+  }
+  return std::make_tuple(min, max);
+}
+
+bool has_negative_values(const gsl_vector *v) {
+  for (auto i=0; i<v->size; i++) {
+    if (v->data[i] < 0.0) {
+      return true;
     }
   }
-  gsl_eigen_symm_free(eworkspace);
-  gsl_vector_free(eval);
-  gsl_matrix_free(G2);
+  return false;
+}
+
+bool checkMatrixEigen(const gsl_matrix *G, double min) {
+  auto eigenvalues = getEigenValues(G);
+  bool ret_valid = true;
+
+  if (has_negative_values(eigenvalues))
+    ret_valid = false;
+
+  auto t = abs_minmax(eigenvalues);
+  auto absmin = get<0>(t);
+  if (absmin < min)
+    ret_valid = false;
+  gsl_vector_free(eigenvalues);
+  return ret_valid;
+}
+
+bool isMatrixIllConditioned(const gsl_matrix *G, double max_ratio) {
+  bool ret_valid = true;
+  auto eigenvalues = getEigenValues(G);
+
+  auto t = abs_minmax(eigenvalues);
+  auto absmin = get<0>(t);
+  auto absmax = get<1>(t);
+  if (absmax/absmin > max_ratio) {
+    #if !NDEBUG
+    cerr << "**** DEBUG: Eigenvalues Min " << absmin << " Max " << absmax << " Ratio " << absmax/absmin << endl;
+    #endif
+    ret_valid = false;
+  }
+  gsl_vector_free(eigenvalues);
   return ret_valid;
 }
 

@@ -1737,12 +1737,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
     // center matrix G
     CenterMatrix(G);
     CenterMatrix(G_full);
-    if (cPar.mode_check) {
-      if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
-      if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
-      if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
-    }
-
+    validate_K(G,cPar.mode_check);
 
     // eigen-decomposition and calculate trace_G
     cout << "Start Eigen-Decomposition..." << endl;
@@ -1890,11 +1885,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
     }
 
     // Now we have the Kinship matrix test it
-    if (cPar.mode_check) {
-      if (!checkMatrixEigen(G)) warning_msg("Computed K has small or negative eigenvalues!");
-      if (!isMatrixSymmetric(G)) warning_msg("Computed K is not symmetric!" );
-      if (!isMatrixPositiveDefinite(G)) warning_msg("Computed K is not positive definite!");
-    }
+    validate_K(G,cPar.mode_check);
 
     if (cPar.a_mode == 21) {
       cPar.WriteMatrix(G, "cXX");
@@ -2357,11 +2348,7 @@ void GEMMA::BatchRun(PARAM &cPar) {
 
         // center matrix G
         CenterMatrix(G);
-        if (cPar.mode_check) {
-          if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
-          if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
-          if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
-        }
+        validate_K(G,cPar.mode_check);
 
         (cPar.v_traceG).clear();
         double d = 0;
@@ -2730,11 +2717,7 @@ return;}
 
       // center matrix G
       CenterMatrix(G);
-      if (cPar.mode_check) {
-        if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
-        if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
-        if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
-      }
+      validate_K(G,cPar.mode_check);
 
       // is residual weights are provided, then
       if (!cPar.file_weight.empty()) {
@@ -3050,11 +3033,7 @@ return;}
 
         // center matrix G
         CenterMatrix(G);
-        if (cPar.mode_check) {
-          if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
-          if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
-          if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
-        }
+        validate_K(G,cPar.mode_check);
       } else {
         cPar.ReadGenotypes(UtX, G, true);
       }
@@ -3171,11 +3150,7 @@ return;}
 
           // center matrix G
           CenterMatrix(G);
-          if (cPar.mode_check) {
-            if (!checkMatrixEigen(G)) warning_msg("K has small or negative eigenvalues!");
-            if (!isMatrixSymmetric(G)) warning_msg("K is not symmetric!" );
-            if (!isMatrixPositiveDefinite(G)) warning_msg("K is not positive definite!");
-          }
+          validate_K(G,cPar.mode_check);
 
         } else {
           cPar.ReadGenotypes(UtX, G, true);
@@ -3341,6 +3316,8 @@ void GEMMA::WriteLog(int argc, char **argv, PARAM &cPar) {
 
   outfile << "##" << endl;
   outfile << "## GEMMA Version = " << version << endl;
+
+  auto messages = cPar.messages;
 
   outfile << "##" << endl;
   outfile << "## Command Line Input = ";

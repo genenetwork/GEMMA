@@ -116,6 +116,9 @@ public:
   bool mode_silence;
   bool mode_debug = false;
   uint issue; // enable tests for issue on github tracker
+
+  vector<string> messages; // collect warnings/errors for log file
+
   int a_mode; // Analysis mode, 1/2/3/4 for Frequentist tests
   int k_mode; // Kinship read mode: 1: n by n matrix, 2: id/id/k_value;
   vector<size_t> p_column; // Which phenotype column needs analysis.
