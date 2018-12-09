@@ -4,6 +4,18 @@ see
 and
 [commits](https://github.com/genetics-statistics/GEMMA/commits/master).
 
+## ChangeLog v0.99 (upcoming release)
+
+Gemma v0.99 introduces a new backend written in the powerful
+[D language](https://dlang.org/). The short of it that D can be
+similar to C++ programming and speed but has a nicer and safer
+syntax. For the time being we'll provide a pure C/C++ version along
+the one with the D faster-lmm-d backend, so it can be compiled but
+will miss on newer features. The new GEMMA
+
+* Is much faster compiling K assuming you have enough RAM
+* Computes all LOCO K matrices in one go with (example)
+
 ## ChangeLog v0.98 (2018/09/28)
 
 With the v0.98 release GEMMA has stabilized, is faster than ever, and
