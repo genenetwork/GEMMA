@@ -107,6 +107,14 @@ or replace openblas with atlas
     env GUIX_PACKAGE_PATH=~/izip/git/opensource/genenetwork/guix-bioinformatics/ ~/.config/guix/current/bin/guix environment -C guix --ad-hoc gcc gdb gfortran:lib gsl1 eigen lapack atlas zlib bash ld-wrapper perl
     make clean && make WITH_OPENBLAS= WITH_ATLAS=1
 
+#### Fancy examples
+
+Current commands are for running legacy
+
+    env TMPDIR=/export/tmp/ /home/wrk/izip/git/opensource/genenetwork/guix-lario/pre-inst-env guix environment -C guix --ad-hoc gcc gdb gfortran:lib gsl eigen openblas zlib bash ld-wrapper perl --substitute-urls="http://guix.genenetwork.org https://berlin.guixsd.org https://mirror.hydra.gnu.org"
+    make LEGACY_CPP=1 clean
+    make LEGACY_CPP=1 check -j 4
+
 #### GNU Guix reproducible build system
 
 One of the challenges of developing software is dealing with
